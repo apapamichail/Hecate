@@ -13,25 +13,25 @@ import gr.uoi.cs.daintiness.hecate.transitions.TransitionList;
  */
 public class DiffResult {
 
-	final public TransitionList tl;
-	final public Metrics met;
-	final public TablesInfo tInfo;
+	final public TransitionList myTransformationList;
+	final public Metrics myMetrics;
+	final public TablesInfo tablesInfo;
 	/**
 	 * 
 	 */
 	public DiffResult() {
-		this.tl = new TransitionList();
-		this.met = new Metrics();
-		this.tInfo = new TablesInfo();
+		this.myTransformationList = new TransitionList();
+		this.myMetrics = new Metrics();
+		this.tablesInfo = new TablesInfo();
 	}
 	
 	public void setVersionNames(String oldVersion, String newVersion) {
-		this.tl.setVersionNames(oldVersion, newVersion);
-		this.met.setVersionNames(oldVersion, newVersion);
+		this.myTransformationList.setVersionNames(oldVersion, newVersion);
+		this.myMetrics.setVersionNames(oldVersion, newVersion);
 	}
 	
 	public void clear() {
-		this.tInfo.clear();
-		met.resetRevisions();
+		this.tablesInfo.clear();
+		myMetrics.resetRevisions();
 	}
 }

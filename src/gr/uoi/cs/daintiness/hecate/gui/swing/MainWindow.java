@@ -170,7 +170,7 @@ public class MainWindow extends JFrame{
 		viewMetrics.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (res != null) {
-					metricsDialog = new MetricsDialog(res.met);
+					metricsDialog = new MetricsDialog(res.myMetrics);
 					metricsDialog.setVisible(true);
 				}
 			}

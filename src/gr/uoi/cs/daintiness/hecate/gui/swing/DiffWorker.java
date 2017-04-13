@@ -3,7 +3,7 @@
  */
 package gr.uoi.cs.daintiness.hecate.gui.swing;
 
-import gr.uoi.cs.daintiness.hecate.diff.Delta;
+import gr.uoi.cs.daintiness.hecate.diff.SchemataDifferencesManager;
 import gr.uoi.cs.daintiness.hecate.diff.DiffResult;
 import gr.uoi.cs.daintiness.hecate.io.Export;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
@@ -53,7 +53,7 @@ public class DiffWorker extends SwingWorker<DiffResult, Integer> {
 			pm.setProgress(1);
 			newSchema = HecateParser.parse(newFile.getAbsolutePath());
 			pm.setProgress(2);
-			res = Delta.minus(oldSchema, newSchema);
+			res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
 			pm.setProgress(3);
 			oldFile = null;
 			newFile = null;
@@ -72,7 +72,7 @@ public class DiffWorker extends SwingWorker<DiffResult, Integer> {
 				for (Entry<String, Table> e : schema.getTables().entrySet()) {
 					String tname = e.getKey();
 					int attrs = e.getValue().getSize();
-					res.tInfo.addTable(tname, i, attrs);
+					res.tablesInfo.addTable(tname, i, attrs);
 				}
 				pm.setNote("Parsing " + list[i+1]);
 				Schema schema2 = HecateParser.parse(path + File.separator + list[i+1]);
@@ -80,17 +80,17 @@ public class DiffWorker extends SwingWorker<DiffResult, Integer> {
 					for (Entry<String, Table> e : schema2.getTables().entrySet()) {
 						String tname = e.getKey();
 						int attrs = e.getValue().getSize();
-						res.tInfo.addTable(tname, i+1, attrs);
+						res.tablesInfo.addTable(tname, i+1, attrs);
 					}
 				}
 				pm.setNote(list[i] + "-" + list[i+1]);
-				res = Delta.minus(schema, schema2);
-				trs.add(res.tl);
+				res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema, schema2);
+				trs.add(res.myTransformationList);
 				Export.metrics(res, path);
 				pm.setProgress(i+1);
 			}
 			try {
-				Export.tables(path, res.met.getNumRevisions()+1, res.tInfo);
+				Export.tables(path, res.myMetrics.getNumRevisions()+1, res.tablesInfo);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -98,7 +98,7 @@ public class DiffWorker extends SwingWorker<DiffResult, Integer> {
 			Export.xml(trs, path);
 			oldSchema = HecateParser.parse(path + File.separator + list[0]);
 			newSchema = HecateParser.parse(path + File.separator + list[list.length-1]);
-			res = Delta.minus(oldSchema, newSchema);
+			res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
 			folder = null;
 		}
 		return res;

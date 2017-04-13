@@ -3,7 +3,7 @@
  */
 package gr.uoi.cs.daintiness.hecate.transitions;
 
-import gr.uoi.cs.daintiness.hecate.diff.Delta;
+import gr.uoi.cs.daintiness.hecate.diff.SchemataDifferencesManager;
 import gr.uoi.cs.daintiness.hecate.diff.DiffResult;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
@@ -30,12 +30,12 @@ public class Testing {
 		Schema schema3 = HecateParser.parse(path + "rev_019569.sql");
 		
 		Transitions trs = new Transitions();
-		res = Delta.minus(schema1, schema2);
-		trs.add(res.tl);
-		res = Delta.minus(schema2, schema3);
-		trs.add(res.tl);
-		res = Delta.minus(schema1, schema3);
-		trs.add(res.tl);
+		res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema1, schema2);
+		trs.add(res.myTransformationList);
+		res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema2, schema3);
+		trs.add(res.myTransformationList);
+		res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema1, schema3);
+		trs.add(res.myTransformationList);
 		test(trs);
 	}
 	

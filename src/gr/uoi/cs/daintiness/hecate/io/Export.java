@@ -41,25 +41,25 @@ public class Export {
 		String filePath = getDir(path) + File.separator + "metrics.csv";
 		FileWriter fw = new FileWriter(filePath, true);
 		BufferedWriter metrics = new BufferedWriter(fw);
-		String name = res.met.getVersionNames()[1];
+		String name = res.myMetrics.getVersionNames()[1];
 		String time = name.substring(0, name.length()-4);
 		metrics.write(
-				res.met.getNumRevisions() + ";" +			//trID
+				res.myMetrics.getNumRevisions() + ";" +			//trID
 				time + ";" +								//time
-				res.met.getVersionNames()[0] + ";" +		//oldVer
-				res.met.getVersionNames()[1] + ";" +		//newVer
-				res.met.getOldSizes()[0] + ";" +			//#oldT
-				res.met.getNewSizes()[0] + ";" +			//#newT
-				res.met.getOldSizes()[1] + ";" +			//#oldA
-				res.met.getNewSizes()[1] + ";" +			//#newA
-				res.met.getTableMetrics()[0] + ";" +		//tIns
-				res.met.getTableMetrics()[1] + ";" +		//tDel
-				res.met.getAttributeMetrics()[0] + ";" +	//aIns
-				res.met.getAttributeMetrics()[1] + ";" +	//aDel
-				res.met.getAttributeMetrics()[2] + ";" +	//aTypeAlt
-				res.met.getAttributeMetrics()[3] + ";" +	//keyAlt
-				res.met.getAttributeMetrics()[4] + ";" +	//aTabIns
-				res.met.getAttributeMetrics()[5] + "\n"		//aTabDel
+				res.myMetrics.getVersionNames()[0] + ";" +		//oldVer
+				res.myMetrics.getVersionNames()[1] + ";" +		//newVer
+				res.myMetrics.getOldSizes()[0] + ";" +			//#oldT
+				res.myMetrics.getNewSizes()[0] + ";" +			//#newT
+				res.myMetrics.getOldSizes()[1] + ";" +			//#oldA
+				res.myMetrics.getNewSizes()[1] + ";" +			//#newA
+				res.myMetrics.getTableMetrics()[0] + ";" +		//tIns
+				res.myMetrics.getTableMetrics()[1] + ";" +		//tDel
+				res.myMetrics.getAttributeMetrics()[0] + ";" +	//aIns
+				res.myMetrics.getAttributeMetrics()[1] + ";" +	//aDel
+				res.myMetrics.getAttributeMetrics()[2] + ";" +	//aTypeAlt
+				res.myMetrics.getAttributeMetrics()[3] + ";" +	//keyAlt
+				res.myMetrics.getAttributeMetrics()[4] + ";" +	//aTabIns
+				res.myMetrics.getAttributeMetrics()[5] + "\n"		//aTabDel
 			);
 		metrics.close();
 	}
