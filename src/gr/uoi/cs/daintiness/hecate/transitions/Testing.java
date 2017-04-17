@@ -4,7 +4,7 @@
 package gr.uoi.cs.daintiness.hecate.transitions;
 
 import gr.uoi.cs.daintiness.hecate.diff.SchemataDifferencesManager;
-import gr.uoi.cs.daintiness.hecate.diff.DiffResult;
+import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 
@@ -23,7 +23,7 @@ import javax.xml.bind.Unmarshaller;
 public class Testing {
 
 	public static void main(String[] args) throws Exception{
-		DiffResult res;
+		DifferencesResult res;
 		String path = "/home/iskoulis/Projects/Evolution Datasets/CMS\'s/wikimedia/schemata/";
 		Schema schema1 = HecateParser.parse(path + "rev_004571.sql");
 		Schema schema2 = HecateParser.parse(path + "rev_008798.sql");

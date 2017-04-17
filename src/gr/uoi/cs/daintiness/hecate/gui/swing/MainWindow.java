@@ -1,7 +1,7 @@
 package gr.uoi.cs.daintiness.hecate.gui.swing;
 
 import gr.uoi.cs.daintiness.hecate.Hecate;
-import gr.uoi.cs.daintiness.hecate.diff.DiffResult;
+import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -48,7 +48,7 @@ public class MainWindow extends JFrame{
 	private AboutDialog aboutDialog;
 	private Image hecateIcon;
 	
-	private DiffResult res;
+	private DifferencesResult res;
 	
 	/**
 	 * Default Constructor

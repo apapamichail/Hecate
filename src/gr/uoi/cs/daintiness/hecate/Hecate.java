@@ -1,4 +1,6 @@
 package gr.uoi.cs.daintiness.hecate;
+import java.io.IOException;
+
 import gr.uoi.cs.daintiness.hecate.gui.swing.MainWindow;
 
 /**
@@ -13,7 +15,8 @@ public class Hecate{
 	 * Creates and shows the main Hecate Window
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)  {
+		//test t =new test();
 		hecate = new MainWindow();
 		hecate.setVisible(true);
 	}

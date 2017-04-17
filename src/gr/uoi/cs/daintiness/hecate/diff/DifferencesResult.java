@@ -11,7 +11,7 @@ import gr.uoi.cs.daintiness.hecate.transitions.TransitionList;
  * @author iskoulis
  *
  */
-public class DiffResult {
+public class DifferencesResult {
 
 	final public TransitionList myTransformationList;
 	final public Metrics myMetrics;
@@ -19,7 +19,7 @@ public class DiffResult {
 	/**
 	 * 
 	 */
-	public DiffResult() {
+	public DifferencesResult() {
 		this.myTransformationList = new TransitionList();
 		this.myMetrics = new Metrics();
 		this.tablesInfo = new TablesInfo();

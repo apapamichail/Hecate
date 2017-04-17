@@ -4,7 +4,7 @@
 package gr.uoi.cs.daintiness.hecate.gui.swing;
 
 import gr.uoi.cs.daintiness.hecate.diff.SchemataDifferencesManager;
-import gr.uoi.cs.daintiness.hecate.diff.DiffResult;
+import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
 import gr.uoi.cs.daintiness.hecate.io.Export;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
@@ -21,7 +21,7 @@ import javax.swing.SwingWorker;
  * @author iskoulis
  *
  */
-public class DiffWorker extends SwingWorker<DiffResult, Integer> {
+public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 	
 	MainPanel mp;
 	ProgressMonitor pm;
@@ -44,9 +44,9 @@ public class DiffWorker extends SwingWorker<DiffResult, Integer> {
 	}
 
 	@Override
-	protected DiffResult doInBackground() throws Exception {
+	protected DifferencesResult doInBackground() throws Exception {
 		pm = new ProgressMonitor(mp.getRootPane(), "Working...", null, 0, 100);
-		DiffResult res = new DiffResult();
+		DifferencesResult res = new DifferencesResult();
 		if (oldFile != null && newFile != null) {
 			pm.setMaximum(3);
 			oldSchema = HecateParser.parse(oldFile.getAbsolutePath());

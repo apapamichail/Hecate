@@ -1,6 +1,6 @@
 package gr.uoi.cs.daintiness.hecate.io;
 
-import gr.uoi.cs.daintiness.hecate.diff.DiffResult;
+import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
 import gr.uoi.cs.daintiness.hecate.metrics.tables.Changes;
 import gr.uoi.cs.daintiness.hecate.metrics.tables.MetricsOverVersion;
 import gr.uoi.cs.daintiness.hecate.metrics.tables.TablesInfo;
@@ -36,7 +36,7 @@ public class Export {
 		}
 	}
 
-	public static void metrics(DiffResult res, String path)
+	public static void metrics(DifferencesResult res, String path)
 			throws IOException {
 		String filePath = getDir(path) + File.separator + "metrics.csv";
 		FileWriter fw = new FileWriter(filePath, true);
