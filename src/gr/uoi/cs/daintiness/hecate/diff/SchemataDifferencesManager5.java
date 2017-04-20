@@ -18,22 +18,12 @@ import java.util.Iterator;
  * @author giskou
  *
  */
-public class SchemataDifferencesManager extends SchemataDifferencesTools{
+public class SchemataDifferencesManager5 extends SchemataDifferencesTools{
 
-  	
+	
+	
 	//refactoring customizations the idea is to put them global so we can refactor
-//	private static Iterator<String> oldAttributeKeys ;
-//	private static Iterator<Attribute> oldAttributeValues ;
-//	private static Iterator<String> newAttributeKeys;
-//	private static Iterator<Attribute> newAttributeValues;
-//	private static Iterator<String> oldTableKeys;
-//	private static Iterator<Table> oldTableValues;
-//	private static Iterator<String> newTableKeys;
-//	private static Iterator<Table> newTableValues;
-	static String oldTableKey = null, newTableKey = null ;
-	static String oldAttrKey = null, newAttrKey = null ;
-
-	/**
+ 	/**
 	 * This function performs the main diff algorithm for
 	 * finding the differences between the schemas that are 
 	 * given as parameters. The algorithm is a modification of
@@ -48,22 +38,30 @@ public class SchemataDifferencesManager extends SchemataDifferencesTools{
 	 * deleted and we move to the next item on the original Map. If a
 	 * Map reaches at an end then the remaining items on the other Map
 	 * are marked as inserted or deleted accordingly.
-	 * @param schemaA 
 	 * @param schemaA
 	 *   The original schema
-	 * @param schemaB 
-	 * @param schemaB
+	 * @param schemaB 	
 	 *   The modified version of the original schema
 	 */
-	
 	public static DifferencesResult getDifferencesBetweenTwoSchemata(Schema schemaA, Schema schemaB) {
 		setUp(schemaA, schemaB);
 		
+		oldTableKeys = schemaA.getTables().keySet().iterator() ;
+		oldTableValues = schemaA.getTables().values().iterator() ;
+		newTableKeys = schemaB.getTables().keySet().iterator() ;
+		newTableValues = schemaB.getTables().values().iterator() ;
+		
+		setOriginalSizes(schemaA.getSize(), schemaB.getSize());				
+		setUp(schemaA, schemaB); 		
 		if (oldTableKeys.hasNext() && newTableKeys.hasNext()){
-			oldTableKey = oldTableKeys.next() ;
+			String oldTableKey = oldTableKeys.next() ;
 			Table oldTable = (Table) oldTableValues.next() ;
-			newTableKey = newTableKeys.next() ;
+			String newTableKey = newTableKeys.next() ;
 			Table newTable = (Table) newTableValues.next() ;
+			initializeAttributesKeys(oldTable, newTable);
+
+			initializeAttributesValues(oldTable, newTable);
+
 			while(true) {
 				in = null; out = null; up = null;
 				if (oldTableKey.compareTo(newTableKey) == 0) {            // ** Matched tables
@@ -107,8 +105,7 @@ public class SchemataDifferencesManager extends SchemataDifferencesTools{
 		checkRemainingTableKeysforOld();
 		checkRemainingTableKeysforNew();
 		
-		results.myMetrics.sanityCheck();//Test need to be MOVEED!!!!!!!!!!!!!
-		
+ 		
 		return results;
 	}
 
@@ -117,9 +114,6 @@ public class SchemataDifferencesManager extends SchemataDifferencesTools{
 	 * @param newTable
 	 */
 	private static void findSameTablesDifferences(Table oldTable, Table newTable) {
-		initializeAttributesKeys(oldTable, newTable);
-
-		initializeAttributesValues(oldTable, newTable);
 
 		computeAttributesDifferences(oldTable, newTable);
 		// check remaining attributes
@@ -146,15 +140,10 @@ public class SchemataDifferencesManager extends SchemataDifferencesTools{
 			Attribute oldAttr = oldAttributeValues.next();
 			newAttrKey = newAttributeKeys.next() ;
 			Attribute newAttr = newAttributeValues.next();
- 			while (true) {
-   				System.out.println(	"__________");
-
-   				System.out.println(computeLevenshteinDistance((CharSequence) newAttr.name,
-  							(CharSequence) oldAttr.name ));
-   				System.out.println(	oldAttr.name);
-   				System.out.println(	newAttr.name);
-   				
- 				if (oldAttrKey.compareTo(newAttrKey) == 0) {                   // possible attribute match
+			
+			while (true) {
+				LevenshteinDistance(newAttrKey,oldAttrKey);
+				if (oldAttrKey.compareTo(newAttrKey) == 0) {                   // possible attribute match
 					if (oldAttr.getType().compareTo(newAttr.getType()) == 0){  // check attribute type
 						if (oldAttr.isKey() == newAttr.isKey()) {              // ** Matched attributes
 							match(oldAttr, newAttr);
@@ -202,4 +191,6 @@ public class SchemataDifferencesManager extends SchemataDifferencesTools{
 			
 		}
 	}
-	}
+
+
+}

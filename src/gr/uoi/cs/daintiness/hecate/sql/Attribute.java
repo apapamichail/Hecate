@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class Attribute implements SqlItem{
 	private Table table;
 	@XmlElement
-	private String name;
+	public String name;
 	@XmlElement
 	private String type;
 	private boolean isNull;

@@ -48,6 +48,7 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 		pm = new ProgressMonitor(mp.getRootPane(), "Working...", null, 0, 100);
 		DifferencesResult res = new DifferencesResult();
 		if (oldFile != null && newFile != null) {
+
 			pm.setMaximum(3);
 			oldSchema = HecateParser.parse(oldFile.getAbsolutePath());
 			pm.setProgress(1);
@@ -58,18 +59,23 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 			oldFile = null;
 			newFile = null;
 		} else if (folder != null){
+
 			res.clear();
 			Transitions trs = new Transitions();
 			String[] list = folder.list();
+
+			
 			pm.setMaximum(list.length);
 			String path = folder.getAbsolutePath();
 			java.util.Arrays.sort(list);
 			
 			Export.initMetrics(path);
 			for (int i = 0; i < list.length-1; i++) {
+
 				pm.setNote("Parsing " + list[i]);
 				Schema schema = HecateParser.parse(path + File.separator + list[i]);
 				for (Entry<String, Table> e : schema.getTables().entrySet()) {
+
 					String tname = e.getKey();
 					int attrs = e.getValue().getSize();
 					res.tablesInfo.addTable(tname, i, attrs);

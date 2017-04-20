@@ -14,37 +14,35 @@ import gr.uoi.cs.daintiness.hecate.transitions.Update;
 
 public class SchemataDifferencesTools {
 	
-	protected static Insersion in;
-	protected static Deletion out;
-	protected static Update up;
-	protected static Iterator<String> oldAttributeKeys ;
-	protected static Iterator<Attribute> oldAttributeValues ;
-	protected static Iterator<String> newAttributeKeys;
-	protected static Iterator<Attribute> newAttributeValues;
-	protected static Iterator<String> oldTableKeys;
-	protected static Iterator<Table> oldTableValues;
-	protected static Iterator<String> newTableKeys;
-	protected static Iterator<Table> newTableValues;
-	protected static DifferencesResult results;
+	public static Insersion in;
+	public static Deletion out;
+	public static Update up;
+	public static Iterator<String> oldAttributeKeys ;
+	public static Iterator<Attribute> oldAttributeValues ;
+	public static Iterator<String> newAttributeKeys;
+	public static Iterator<Attribute> newAttributeValues;
+	public static Iterator<String> oldTableKeys;
+	public static Iterator<Table> oldTableValues;
+	public static Iterator<String> newTableKeys;
+	public static Iterator<Table> newTableValues;
+	public static DifferencesResult results;
 
-	protected static void setUp(Schema schemaA,Schema schemaB){
-		
+	/**
+	 * 
+	 */
+	public static void setUp(Schema schemaA, Schema schemaB){
 		results = new DifferencesResult();
 		results.myMetrics.newRevision();
 		results.setVersionNames(schemaA.getName(), schemaB.getName());
-		
-		String oldTableKey = null, newTableKey = null ;
-		String oldAttrKey = null, newAttrKey = null ;
-		
 		oldTableKeys = schemaA.getTables().keySet().iterator() ;
 		oldTableValues = schemaA.getTables().values().iterator() ;
 		newTableKeys = schemaB.getTables().keySet().iterator() ;
 		newTableValues = schemaB.getTables().values().iterator() ;
-		
 		setOriginalSizes(schemaA.getSize(), schemaB.getSize());
 		
 	}
-	protected static void checkRemainingTableKeysforNew() {
+	
+	public static void checkRemainingTableKeysforNew() {
 		String newTableKey;
 		while (newTableKeys.hasNext()) {
 			newTableKey = (String) newTableKeys.next();
@@ -56,7 +54,7 @@ public class SchemataDifferencesTools {
 	/**
 	 * 
 	 */
-	protected static void checkRemainingTableKeysforOld() {
+	public static void checkRemainingTableKeysforOld() {
 		String oldTableKey;
 		while (oldTableKeys.hasNext()) {
 			oldTableKey = (String) oldTableKeys.next();
@@ -64,32 +62,32 @@ public class SchemataDifferencesTools {
 			deleteTable(oldTable);
 		}
 	}
-	
+
 	/**
 	 * @param oldTable
 	 */
-	protected static void insertAttributesNotInOld(Table oldTable) {
+	public static void insertAttributesNotInOld(Table oldTable) {
 		String newAttrKey;
 		newAttrKey = (String) newAttributeKeys.next();
 		Attribute newAttr = newAttributeValues.next();
 		attributeInsert(oldTable, newAttr);
 	}
-	
+
 	/**
 	 * @param newTable
 	 */
-	protected static void deleteAttributesNotInNew(Table newTable) {
+	public static void deleteAttributesNotInNew(Table newTable) {
 		String oldAttrKey;
 		oldAttrKey = (String) oldAttributeKeys.next();
 		Attribute oldAttr = oldAttributeValues.next();
 		attributeDelete(oldAttr, newTable);
 	}
- 
+
 	/**
 	 * @param oldTable
 	 * @param newTable
 	 */
-	protected static void initializeAttributesValues(Table oldTable, Table newTable) {
+	public static void initializeAttributesValues(Table oldTable, Table newTable) {
 		oldAttributeValues = oldTable.getAttrs().values().iterator() ;
 		newAttributeValues = newTable.getAttrs().values().iterator() ;
 	}
@@ -98,14 +96,14 @@ public class SchemataDifferencesTools {
 	 * @param oldTable
 	 * @param newTable
 	 */
-	protected static void initializeAttributesKeys(Table oldTable, Table newTable) {
+	public static void initializeAttributesKeys(Table oldTable, Table newTable) {
 		oldAttributeKeys = oldTable.getAttrs().keySet().iterator();
 		newAttributeKeys = newTable.getAttrs().keySet().iterator();
 	}
 
 	
 
-	protected static void attributeInsert(Table oldTable, Attribute newAttr) {
+	public static void attributeInsert(Table oldTable, Attribute newAttr) {
 		results.myMetrics.insertAttr();
 		insertItemInList(newAttr);
 		newAttr.setMode(SqlItem.INSERTED);
@@ -114,7 +112,7 @@ public class SchemataDifferencesTools {
 		results.tablesInfo.addChange(oldTable.getName(), results.myMetrics.getNumRevisions(), ChangeType.Insertion);
 	}
 
-	protected static void attributeDelete(Attribute oldAttr, Table newTable) {
+	public static void attributeDelete(Attribute oldAttr, Table newTable) {
 		results.myMetrics.deleteAttr();
 		deleteItem(oldAttr);
 		oldAttr.setMode(SqlItem.DELETED);
@@ -123,7 +121,7 @@ public class SchemataDifferencesTools {
 		results.tablesInfo.addChange(newTable.getName(), results.myMetrics.getNumRevisions(), ChangeType.Deletion);
 	}
 
-	protected static void attributeTypeChange(Attribute oldAttr, Attribute newAttr) {
+	public static void attributeTypeChange(Attribute oldAttr, Attribute newAttr) {
 		results.myMetrics.alterAttr();
 		updateAttribute(newAttr, "TypeChange");
 		oldAttr.getTable().setMode(SqlItem.UPDATED);
@@ -133,7 +131,7 @@ public class SchemataDifferencesTools {
 		results.tablesInfo.addChange(newAttr.getTable().getName(), results.myMetrics.getNumRevisions(), ChangeType.AttrTypeChange);
 	}
 
-	protected static void attributeKeyChange(Attribute oldAttr, Attribute newAttr) {
+	public static void attributeKeyChange(Attribute oldAttr, Attribute newAttr) {
 		results.myMetrics.alterKey();
 		updateAttribute(newAttr, "KeyChange");
 		oldAttr.getTable().setMode(SqlItem.UPDATED);
@@ -143,28 +141,28 @@ public class SchemataDifferencesTools {
 		results.tablesInfo.addChange(newAttr.getTable().getName(), results.myMetrics.getNumRevisions(), ChangeType.KeyChange);
 	}
 	
-	protected static void deleteTable(Table t) {
+	public static void deleteTable(Table t) {
 		deleteItem(t);
 		results.myMetrics.deleteTable();
 		markAll(t, SqlItem.DELETED);     // mark attributes deleted
 	}
 	
-	protected static void insertTable(Table t) {
+	public static void insertTable(Table t) {
 		insertItemInList(t);
 		results.myMetrics.insetTable();
 		markAll(t, SqlItem.INSERTED);     // mark attributes inserted
 	}
 	
-	protected static void alterTable(Table t) {
+	public static void alterTable(Table t) {
 		results.myMetrics.alterTable();
 	}
 
-	protected static void match(SqlItem oldI, SqlItem newI) {
+	public static void match(SqlItem oldI, SqlItem newI) {
 		oldI.setMode(SqlItem.MACHED);
 		newI.setMode(SqlItem.MACHED);
 	}
 
-	protected static void markAll(Table t, int mode) {
+	public static void markAll(Table t, int mode) {
 		t.setMode(mode);
 		for (Iterator<Attribute> i = t.getAttrs().values().iterator(); i.hasNext(); ) {
 			i.next().setMode(mode);
@@ -176,7 +174,7 @@ public class SchemataDifferencesTools {
 		}
 	}
 	
-	protected static void insertItemInList(SqlItem item) {
+	public static void insertItemInList(SqlItem item) {
 		if (item.getClass() == Attribute.class) {
 			if (in == null) {
 				in = new Insersion();
@@ -194,7 +192,7 @@ public class SchemataDifferencesTools {
 		}
 	}
 	
-	protected static void deleteItem(SqlItem item) {
+	public static void deleteItem(SqlItem item) {
 		if (item.getClass() == Attribute.class) {
 			if (out == null) {
 				out = new Deletion();
@@ -212,7 +210,7 @@ public class SchemataDifferencesTools {
 		}
 	}
 	
-	protected static void updateAttribute(Attribute item, String type) {
+	public static void updateAttribute(Attribute item, String type) {
 		if (up == null) {
 			up = new Update();
 			results.myTransformationList.add(up);
@@ -224,8 +222,100 @@ public class SchemataDifferencesTools {
 		}
 	}
 	
-	protected static void setOriginalSizes(int[] sizeA, int[] sizeB) {
+	public static void setOriginalSizes(int[] sizeA, int[] sizeB) {
 		results.myMetrics.setOrigTables(sizeA[0]); results.myMetrics.setOrigAttrs(sizeA[1]);
 		results.myMetrics.setNewTables(sizeB[0]); results.myMetrics.setNewAttrs(sizeB[1]);
 	}
+	
+                                                                            
+                                                                                 
+    public static int computeLevenshteinDistance(CharSequence lhs, CharSequence rhs) {      
+    	 int len0 = lhs.length() + 1;                                                     
+    	    int len1 = rhs.length() + 1;                                                     
+    	                                                                                    
+    	    // the array of distances                                                       
+    	    int[] cost = new int[len0];                                                     
+    	    int[] newcost = new int[len0];                                                  
+    	                                                                                    
+    	    // initial cost of skipping prefix in String s0                                 
+    	    for (int i = 0; i < len0; i++) cost[i] = i;                                     
+    	                                                                                    
+    	    // dynamically computing the array of distances                                  
+    	                                                                                    
+    	    // transformation cost for each letter in s1                                    
+    	    for (int j = 1; j < len1; j++) {                                                
+    	        // initial cost of skipping prefix in String s1                             
+    	        newcost[0] = j;                                                             
+    	                                                                                    
+    	        // transformation cost for each letter in s0                                
+    	        for(int i = 1; i < len0; i++) {                                             
+    	            // matching current letters in both strings                             
+    	            int match = (lhs.charAt(i - 1) == rhs.charAt(j - 1)) ? 0 : 1;             
+    	                                                                                    
+    	            // computing cost for each transformation                               
+    	            int cost_replace = cost[i - 1] + match;                                 
+    	            int cost_insert  = cost[i] + 1;                                         
+    	            int cost_delete  = newcost[i - 1] + 1;                                  
+    	                                                                                    
+    	            // keep minimum cost                                                    
+    	            newcost[i] = Math.min(Math.min(cost_insert, cost_delete), cost_replace);
+    	        }                                                                           
+    	                                                                                    
+    	        // swap cost/newcost arrays                                                 
+    	        int[] swap = cost; cost = newcost; newcost = swap;                          
+    	    }                                                                               
+    	                                                                                    
+    	    // the distance is the cost for transforming all letters in both strings        
+    	    return cost[len0 - 1];                                                                            
+    }                                                                            
+
+	public static void getLevenshteinDistance(String nameA, String nameB){
+		
+		int length, lengthA, lengthB;
+		int distance=0;
+ 		double threshold = 0.20;
+
+		lengthA = nameA.length();
+		lengthB = nameB.length();
+		
+		for( int i=0; i < lengthA; i++){
+			for( int j = 0; j < lengthB; j++){
+				if (nameA.charAt(i) != nameB.charAt(i)){
+					distance +=1;
+				}
+			}
+
+		}
+//		if (lengthA > lengthB){
+//			length = lengthB;
+//			distance = lengthA - lengthB;
+//		}
+//		else {
+//			length = lengthA;
+//			distance = lengthB - lengthA;
+//		}
+////		System.out.println(distance);
+////
+////		System.out.println(nameB);
+//		while( i < length){
+//			if (nameA.charAt(i) != nameB.charAt(i)){
+//				distance +=1;
+//			}
+//			i=i+1;
+//		}
+//		 //&& distance <=0.5*length
+//		if( distance > 1){
+//			System.out.println("---------------------");
+//
+//			System.out.println("distance : "+distance+"\n");
+//			System.out.println("threshold*length : "+0.5*length+"\n");
+//			System.out.println("nameA : "+nameA+"\n");
+//			System.out.println("nameB : "+nameB+"\n");
+//
+//		}
+			
+		//return distance;
+		
+	}
+
 }

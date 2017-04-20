@@ -151,4 +151,25 @@ public class Metrics {
 		int calcAttrChanges = attrIns + attrTabIns - attrDel - attrTabDel; 
 		assert attrGrowth == calcAttrChanges: "Attribute changes misculculated";
 	}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
