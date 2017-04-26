@@ -5,7 +5,9 @@ package gr.uoi.cs.daintiness.hecate.gui.swing;
 
 import gr.uoi.cs.daintiness.hecate.diff.SchemataDifferencesManager;
 import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
-import gr.uoi.cs.daintiness.hecate.io.Export;
+import gr.uoi.cs.daintiness.hecate.io.csvExport;
+import gr.uoi.cs.daintiness.hecate.io.xmlExport;
+import gr.uoi.cs.daintiness.hecate.io.MetricsExport;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 import gr.uoi.cs.daintiness.hecate.sql.Table;
@@ -23,98 +25,97 @@ import javax.swing.SwingWorker;
  */
 public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 	
-	MainPanel mp;
-	ProgressMonitor pm;
+	MainPanel mainpanel;
+	ProgressMonitor progressmonitor;
 	File oldFile = null;
 	File newFile = null;
 	File folder = null;
 	Schema oldSchema;
 	Schema newSchema;
 	
-	public DiffWorker(MainPanel mp,
+	public DiffWorker(MainPanel mainpanel,
 			          File oldFile, File newFile) {
-		this.mp = mp;
+		this.mainpanel = mainpanel;
 		this.oldFile = oldFile;
 		this.newFile = newFile;
 	}
 	
-	public DiffWorker(MainPanel mp, File folder) {
-		this.mp = mp;
+	public DiffWorker(MainPanel mainpanel, File folder) {
+		this.mainpanel = mainpanel;
 		this.folder = folder;
 	}
 
 	@Override
 	protected DifferencesResult doInBackground() throws Exception {
-		pm = new ProgressMonitor(mp.getRootPane(), "Working...", null, 0, 100);
-		DifferencesResult res = new DifferencesResult();
+		progressmonitor = new ProgressMonitor(mainpanel.getRootPane(), "Working...", null, 0, 100);
+		DifferencesResult result = new DifferencesResult();
 		if (oldFile != null && newFile != null) {
 
-			pm.setMaximum(3);
+			progressmonitor.setMaximum(3);
 			oldSchema = HecateParser.parse(oldFile.getAbsolutePath());
-			pm.setProgress(1);
+			progressmonitor.setProgress(1);
 			newSchema = HecateParser.parse(newFile.getAbsolutePath());
-			pm.setProgress(2);
-			res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
-			pm.setProgress(3);
+			progressmonitor.setProgress(2);
+			result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
+			progressmonitor.setProgress(3);
 			oldFile = null;
 			newFile = null;
 		} else if (folder != null){
 
-			res.clear();
-			Transitions trs = new Transitions();
+			result.clear();
+			Transitions transitions = new Transitions();
 			String[] list = folder.list();
 
 			
-			pm.setMaximum(list.length);
+			progressmonitor.setMaximum(list.length);
 			String path = folder.getAbsolutePath();
 			java.util.Arrays.sort(list);
-			
-			Export.initMetrics(path);
+			MetricsExport.initMetrics(path);
 			for (int i = 0; i < list.length-1; i++) {
 
-				pm.setNote("Parsing " + list[i]);
+				progressmonitor.setNote("Parsing " + list[i]);
 				Schema schema = HecateParser.parse(path + File.separator + list[i]);
 				for (Entry<String, Table> e : schema.getTables().entrySet()) {
 
-					String tname = e.getKey();
-					int attrs = e.getValue().getSize();
-					res.tablesInfo.addTable(tname, i, attrs);
+					String tablename = e.getKey();
+					int attributes = e.getValue().getSize();
+					result.tablesInfo.addTable(tablename, i, attributes);
 				}
-				pm.setNote("Parsing " + list[i+1]);
+				progressmonitor.setNote("Parsing " + list[i+1]);
 				Schema schema2 = HecateParser.parse(path + File.separator + list[i+1]);
 				if (i == list.length-2) {
 					for (Entry<String, Table> e : schema2.getTables().entrySet()) {
-						String tname = e.getKey();
-						int attrs = e.getValue().getSize();
-						res.tablesInfo.addTable(tname, i+1, attrs);
+						String tablename = e.getKey();
+						int attributes = e.getValue().getSize();
+						result.tablesInfo.addTable(tablename, i+1, attributes);
 					}
 				}
-				pm.setNote(list[i] + "-" + list[i+1]);
-				res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema, schema2);
-				trs.add(res.myTransformationList);
-				Export.metrics(res, path);
-				pm.setProgress(i+1);
+				progressmonitor.setNote(list[i] + "-" + list[i+1]);
+				result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema, schema2);
+				transitions.add(result.myTransformationList);
+				MetricsExport.metrics(result, path);
+				progressmonitor.setProgress(i+1);
 			}
 			try {
-				Export.tables(path, res.myMetrics.getNumRevisions()+1, res.tablesInfo);
+				csvExport.tables(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Export.xml(trs, path);
+			xmlExport.xml(transitions, path);
 			oldSchema = HecateParser.parse(path + File.separator + list[0]);
 			newSchema = HecateParser.parse(path + File.separator + list[list.length-1]);
-			res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
+			result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
 			folder = null;
 		}
-		return res;
+		return result;
 	}
 
 	@Override
 	protected void done() {
-		mp.drawSchema(oldSchema, "old");
-		mp.drawSchema(newSchema, "new");
-		pm.setProgress(pm.getMaximum());
+		mainpanel.drawSchema(oldSchema, "old");
+		mainpanel.drawSchema(newSchema, "new");
+		progressmonitor.setProgress(progressmonitor.getMaximum());
 		super.done();
 	}
 }
