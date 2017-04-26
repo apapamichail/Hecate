@@ -24,12 +24,13 @@ import gr.uoi.cs.daintiness.hecate.sql.Table;
 import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
 
 /**
- * @author angelo
+ * @author angeloASDA
+ * 
  *
  */
 public class SchemataDifferencesManagerTest {
 	File schemata;
-
+	int warrior;
 
 	/**
 	 * @throws java.lang.Exception
