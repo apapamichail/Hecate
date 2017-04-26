@@ -17,19 +17,21 @@ import org.junit.Test;
 
 import com.sun.media.jfxmedia.logging.Logger;
 
-import gr.uoi.cs.daintiness.hecate.io.Export;
+import gr.uoi.cs.daintiness.hecate.io.*;
+import gr.uoi.cs.daintiness.hecate.io.MetricsExport;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 import gr.uoi.cs.daintiness.hecate.sql.Table;
 import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
 
 /**
- * @author angelo
+ * @author angeloASDA
+ * 
  *
  */
 public class SchemataDifferencesManagerTest {
 	File schemata;
-
+	int warrior;
 
 	/**
 	 * @throws java.lang.Exception
@@ -45,7 +47,7 @@ public class SchemataDifferencesManagerTest {
  		String path = folder.getAbsolutePath();
 		java.util.Arrays.sort(list);
 		
-		Export.initMetrics(path);
+		MetricsExport.initMetrics(path);
 		for (int i = 0; i < list.length-1; i++) {
  			Schema schema = HecateParser.parse(path + File.separator + list[i]);
 			for (Entry<String, Table> e : schema.getTables().entrySet()) {
@@ -63,15 +65,15 @@ public class SchemataDifferencesManagerTest {
 			}
  			res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema, schema2);
 			trs.add(res.myTransformationList);
-			Export.metrics(res, path);
+			MetricsExport.metrics(res, path);
  		}
 		try {
-			Export.tables(path, res.myMetrics.getNumRevisions()+1, res.tablesInfo);
+			csvExport.tables(path, res.myMetrics.getNumRevisions()+1, res.tablesInfo);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Export.xml(trs, path);
+		xmlExport.xml(trs, path);
 		
 		folder = null;
 		}
