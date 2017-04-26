@@ -3,10 +3,10 @@
  */
 package gr.uoi.cs.daintiness.hecate.gui.swing;
 
-import gr.uoi.cs.daintiness.hecate.diff.SchemataDifferencesManager;
-import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
 import gr.uoi.cs.daintiness.hecate.io.csvExport;
 import gr.uoi.cs.daintiness.hecate.io.xmlExport;
+import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
+import gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesManager;
 import gr.uoi.cs.daintiness.hecate.io.MetricsExport;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
@@ -64,34 +64,34 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 
 			result.clear();
 			Transitions transitions = new Transitions();
-			String[] list = folder.list();
+			String[] folders = folder.list();
 
 			
-			progressmonitor.setMaximum(list.length);
+			progressmonitor.setMaximum(folders.length);
 			String path = folder.getAbsolutePath();
-			java.util.Arrays.sort(list);
+			java.util.Arrays.sort(folders);
 			MetricsExport.initMetrics(path);
-			for (int i = 0; i < list.length-1; i++) {
+			for (int i = 0; i < folders.length-1; i++) {
 
-				progressmonitor.setNote("Parsing " + list[i]);
-				Schema schema = HecateParser.parse(path + File.separator + list[i]);
-				for (Entry<String, Table> e : schema.getTables().entrySet()) {
+				progressmonitor.setNote("Parsing " + folders[i]);
+				Schema schemaA = HecateParser.parse(path + File.separator + folders[i]);
+				for (Entry<String, Table> e : schemaA.getTables().entrySet()) {
 
 					String tablename = e.getKey();
 					int attributes = e.getValue().getSize();
 					result.tablesInfo.addTable(tablename, i, attributes);
 				}
-				progressmonitor.setNote("Parsing " + list[i+1]);
-				Schema schema2 = HecateParser.parse(path + File.separator + list[i+1]);
-				if (i == list.length-2) {
-					for (Entry<String, Table> e : schema2.getTables().entrySet()) {
+				progressmonitor.setNote("Parsing " + folders[i+1]);
+				Schema schemaB = HecateParser.parse(path + File.separator + folders[i+1]);
+				if (i == folders.length-2) {
+					for (Entry<String, Table> e : schemaB.getTables().entrySet()) {
 						String tablename = e.getKey();
 						int attributes = e.getValue().getSize();
 						result.tablesInfo.addTable(tablename, i+1, attributes);
 					}
 				}
-				progressmonitor.setNote(list[i] + "-" + list[i+1]);
-				result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema, schema2);
+				progressmonitor.setNote(folders[i] + "-" + folders[i+1]);
+				result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schemaA, schemaB);
 				transitions.add(result.myTransformationList);
 				MetricsExport.metrics(result, path);
 				progressmonitor.setProgress(i+1);
@@ -103,8 +103,8 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 				e.printStackTrace();
 			}
 			xmlExport.xml(transitions, path);
-			oldSchema = HecateParser.parse(path + File.separator + list[0]);
-			newSchema = HecateParser.parse(path + File.separator + list[list.length-1]);
+			oldSchema = HecateParser.parse(path + File.separator + folders[0]);
+			newSchema = HecateParser.parse(path + File.separator + folders[folders.length-1]);
 			result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
 			folder = null;
 		}

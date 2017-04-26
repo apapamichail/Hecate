@@ -3,8 +3,8 @@
  */
 package gr.uoi.cs.daintiness.hecate.transitions;
 
-import gr.uoi.cs.daintiness.hecate.diff.SchemataDifferencesManager;
-import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
+import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
+import gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesManager;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 

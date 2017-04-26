@@ -1,7 +1,7 @@
 package gr.uoi.cs.daintiness.hecate.gui.swing;
 
 import gr.uoi.cs.daintiness.hecate.Hecate;
-import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
+import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
 
 import java.awt.Dimension;
 import java.awt.Image;

@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import gr.uoi.cs.daintiness.hecate.diff.DifferencesResult;
+import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
 
 public class MetricsExport extends Export {
 	
