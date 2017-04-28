@@ -22,16 +22,16 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
  * the file given to the constructor.
  * @author giskou
  */
-public class HecateParser {
-	static Schema s;
+public class HecateParser implements ParserInterface {
+	static Schema schema;
 
 	static class UnMach {
 		Table orT;
-		DDLParser.ForeignContext ctx;
+		DDLParser.ForeignContext context;
 		
-		public UnMach(Table orT, DDLParser.ForeignContext ctx) {
+		public UnMach(Table orT, DDLParser.ForeignContext context) {
 			this.orT = orT;
-			this.ctx = ctx;
+			this.context = context;
 		}
 	}
 
@@ -58,13 +58,32 @@ public class HecateParser {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(loader, root);
 		File file = new File(filePath);
-		s.setTitle(file.getName());
-		return s;
+		schema.setTitle(file.getName());
+		return schema;
 	}
-
+	public static void parseSchema(String filePath) {
+		CharStream      charStream = null;
+		
+		try {
+			charStream = new ANTLRFileStream(filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+		}
+		DDLLexer        lexer = new DDLLexer(charStream) ;
+		TokenStream     tokenStream = new CommonTokenStream(lexer);
+		DDLParser       parser = new DDLParser(tokenStream) ;
+		ParseTree       root = parser.start();
+		SchemaLoader    loader = new SchemaLoader();
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(loader, root);
+		File file = new File(filePath);
+		schema.setTitle(file.getName());
+		
+	}
 	private static class SchemaLoader extends DDLBaseListener {
 
-		private Table t;
+		private Table table;
 		private Attribute a;
 		boolean foundTableConst = false;
 		boolean foundAlterConst = false;
@@ -72,102 +91,102 @@ public class HecateParser {
 		String alteringTable = null;
 		List<UnMach> unMached = new ArrayList<HecateParser.UnMach>();
 
-		public void enterStart (DDLParser.StartContext ctx) {
+		public void enterStart (DDLParser.StartContext context) {
 //			System.out.println("Starting");
-			s = new Schema();
+			schema = new Schema();
 		}
-		public void exitStart (DDLParser.StartContext ctx) {
+		public void exitStart (DDLParser.StartContext context) {
 			processUnmached();
-//			System.out.println("\n\n\n" + s.print());
+//			System.out.println("\n\n\n" + schema.print());
 		}
 
-		public void enterTable (DDLParser.TableContext ctx) {
-			String tableName = removeQuotes(ctx.table_name().getText());
-			t = new Table(tableName);
+		public void enterTable (DDLParser.TableContext context) {
+			String tableName = removeQuotes(context.table_name().getText());
+			table = new Table(tableName);
 		}
-		public void exitTable (DDLParser.TableContext ctx) {
-			s.addTable(t);
+		public void exitTable (DDLParser.TableContext context) {
+			schema.addTable(table);
 		}
 
-		public void enterColumn (DDLParser.ColumnContext ctx) {
-			String colName = removeQuotes(ctx.col_name().getText());
-			String colType = ctx.data_type().getText();
+		public void enterColumn (DDLParser.ColumnContext context) {
+			String colName = removeQuotes(context.col_name().getText());
+			String colType = context.data_type().getText();
 			colType = colType.toUpperCase();
 			a = new Attribute(colName, colType);
 		}
 
-		public void exitColumn (DDLParser.ColumnContext ctx) {
-			t.addAttribute(a);
+		public void exitColumn (DDLParser.ColumnContext context) {
+			table.addAttribute(a);
 		}
 
-		public void enterLine_constraint(DDLParser.Line_constraintContext ctx) {
+		public void enterLine_constraint(DDLParser.Line_constraintContext context) {
 			foundLineConst = true;
 		}
-		public void exitLine_constraint(DDLParser.Line_constraintContext ctx) {
+		public void exitLine_constraint(DDLParser.Line_constraintContext context) {
 			foundLineConst = false;
 		}
 
-		public void enterAlter_statement(DDLParser.Alter_statementContext ctx) {
-			alteringTable = ctx.table_name().getText();
+		public void enterAlter_statement(DDLParser.Alter_statementContext context) {
+			alteringTable = context.table_name().getText();
 		}
-		public void exitAlter_statement(DDLParser.Alter_statementContext ctx) {
+		public void exitAlter_statement(DDLParser.Alter_statementContext context) {
 			alteringTable = null;
 		}
 
-		public void enterTable_constraint(DDLParser.Table_constraintContext ctx) {
+		public void enterTable_constraint(DDLParser.Table_constraintContext context) {
 			foundTableConst = true;
 		}
-		public void exitTable_constraint(DDLParser.Table_constraintContext ctx) {
+		public void exitTable_constraint(DDLParser.Table_constraintContext context) {
 			foundTableConst = false;
 		}
 
-		public void enterAlter_constraint(DDLParser.Alter_constraintContext ctx) {
+		public void enterAlter_constraint(DDLParser.Alter_constraintContext context) {
 			foundAlterConst = true;
 		}
-		public void exitAlter_constraint(DDLParser.Alter_constraintContext ctx) {
+		public void exitAlter_constraint(DDLParser.Alter_constraintContext context) {
 			foundAlterConst = true;
 		}
 
-		public void enterPrimary (DDLParser.PrimaryContext ctx) {
+		public void enterPrimary (DDLParser.PrimaryContext context) {
 			if (foundTableConst) {
-				String todo = ctx.parNameList().getText();
+				String todo = context.parNameList().getText();
 				todo = todo.substring(1, todo.length()-1);
 				String[] names = todo.split(",");
-				for (String s : names) {
-					if (t.getAttrs().get(s) != null){
-						t.addAttrToPrimeKey(t.getAttrs().get(s));
+				for (String schema : names) {
+					if (table.getAttrs().get(schema) != null){
+						table.addAttrToPrimeKey(table.getAttrs().get(schema));
 					}
 				}
 			} else if (foundAlterConst) {
 			} else if (foundLineConst){
-				t.addAttrToPrimeKey(a);
+				table.addAttrToPrimeKey(a);
 			} else {}
 		}
 
-		public void enterForeign (DDLParser.ForeignContext ctx) {
+		public void enterForeign (DDLParser.ForeignContext context) {
 			Table orTable = null, reTable = null;
 			Attribute[] or, re;
-			String reTableName = ctx.reference_definition().table_name().getText();
+			String reTableName = context.reference_definition().table_name().getText();
 			if (foundTableConst) {
-				orTable = t;
+				orTable = table;
 				if (reTableName.compareTo(orTable.getName()) == 0) {
-					reTable = t;
+					reTable = table;
 				} else {
-					reTable = s.getTables().get(reTableName);
+					reTable = schema.getTables().get(reTableName);
 					if (reTable == null) {
-						unMached.add(new UnMach(orTable, ctx));
+						unMached.add(new UnMach(orTable, context));
 						return;
 					}
 				}
 			} else if (foundAlterConst) {
-//				System.out.println(alteringTable + " " + ctx.getText());
-				orTable = s.getTables().get(alteringTable);
-				reTable = s.getTables().get(reTableName);
+//				System.out.println(alteringTable + " " + context.getText());
+				orTable = schema.getTables().get(alteringTable);
+				reTable = schema.getTables().get(reTableName);
 			} else {
 				// this is not supposed to happen
 			}
-			or = getNames(ctx.parNameList().getText(), orTable);
-			re = getNames(ctx.reference_definition().parNameList().getText(), reTable);
+			or = getNames(context.parNameList().getText(), orTable);
+			re = getNames(context.reference_definition().parNameList().getText(), reTable);
 			for (int i = 0; i < or.length; i++) {
 				if (or[i] == null || re[i] == null) {
 					// sql typo???
@@ -178,26 +197,26 @@ public class HecateParser {
 			}
 		}
 
-		public void enterReference (DDLParser.ReferenceContext ctx) {
-			Table orTable = t;
-			Table reTable = s.getTables().get(ctx.reference_definition().table_name().getText());
+		public void enterReference (DDLParser.ReferenceContext context) {
+			Table orTable = table;
+			Table reTable = schema.getTables().get(context.reference_definition().table_name().getText());
 			Attribute or = a;
-			Attribute[] re = getNames(ctx.reference_definition().parNameList().getText(), reTable);
+			Attribute[] re = getNames(context.reference_definition().parNameList().getText(), reTable);
 			orTable.getfKey().addReference(or, re[0]);
 		}
 
 		private void processUnmached() {
 			for (UnMach item : unMached) {
-				DDLParser.ForeignContext ctx = item.ctx;
+				DDLParser.ForeignContext context = item.context;
 				Table orTable = item.orT;
-				String reTableName = ctx.reference_definition().table_name().getText();
-				Table reTable = s.getTables().get(reTableName);
+				String reTableName = context.reference_definition().table_name().getText();
+				Table reTable = schema.getTables().get(reTableName);
 				if (reTable == null) {
 					// still not found ... ignore
 					continue;
 				}
-				Attribute[] or = getNames(ctx.parNameList().getText(), orTable);
-				Attribute[] re = getNames(ctx.reference_definition().parNameList().getText(), reTable);
+				Attribute[] or = getNames(context.parNameList().getText(), orTable);
+				Attribute[] re = getNames(context.reference_definition().parNameList().getText(), reTable);
 				for (int i = 0; i < or.length; i++) {
 					if (or[i] == null || re[i] == null) {
 						// sql typo???
@@ -209,18 +228,18 @@ public class HecateParser {
 			}
 		}
 
-		private Attribute[] getNames(String s, Table table) {
-			s = s.substring(1, s.length()-1);
-			String[] names = s.split(",");
-			Attribute[] res = new Attribute[names.length];
+		private Attribute[] getNames(String schema, Table table) {
+			schema = schema.substring(1, schema.length()-1);
+			String[] names = schema.split(",");
+			Attribute[] result = new Attribute[names.length];
 			for (int i = 0; i < names.length; i++) {
-				res[i] = table.getAttrs().get(names[i]);
+				result[i] = table.getAttrs().get(names[i]);
 			}
-			return res;
+			return result;
 		}
 
-		private boolean hasQuotes(String s) {
-			switch (s.charAt(0)) {
+		private boolean hasQuotes(String schema) {
+			switch (schema.charAt(0)) {
 				case '\'':
 				case '\"':
 				case '`':
@@ -230,13 +249,13 @@ public class HecateParser {
 			}
 		}
 
-		private String removeQuotes(String s) {
-			if (hasQuotes(s)) {
-				String res = null;
-				res = s.substring(1, s.length()-1);
-				return res;
+		private String removeQuotes(String schema) {
+			if (hasQuotes(schema)) {
+				String result = null;
+				result = schema.substring(1, schema.length()-1);
+				return result;
 			}
-			return s;
+			return schema;
 		}
 	}
 }
