@@ -22,8 +22,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
  * the file given to the constructor.
  * @author giskou
  */
-public class HecateParser {
-	static Schema s;
+public class HecateParser implements ParserInterface {
+	static Schema schema;
 
 	static class UnMach {
 		Table orT;
@@ -58,10 +58,29 @@ public class HecateParser {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(loader, root);
 		File file = new File(filePath);
-		s.setTitle(file.getName());
-		return s;
+		schema.setTitle(file.getName());
+		return schema;
 	}
-
+	public static void parseSchema(String filePath) {
+		CharStream      charStream = null;
+		
+		try {
+			charStream = new ANTLRFileStream(filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+		}
+		DDLLexer        lexer = new DDLLexer(charStream) ;
+		TokenStream     tokenStream = new CommonTokenStream(lexer);
+		DDLParser       parser = new DDLParser(tokenStream) ;
+		ParseTree       root = parser.start();
+		SchemaLoader    loader = new SchemaLoader();
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(loader, root);
+		File file = new File(filePath);
+		schema.setTitle(file.getName());
+		
+	}
 	private static class SchemaLoader extends DDLBaseListener {
 
 		private Table t;
@@ -74,11 +93,11 @@ public class HecateParser {
 
 		public void enterStart (DDLParser.StartContext ctx) {
 //			System.out.println("Starting");
-			s = new Schema();
+			schema = new Schema();
 		}
 		public void exitStart (DDLParser.StartContext ctx) {
 			processUnmached();
-//			System.out.println("\n\n\n" + s.print());
+//			System.out.println("\n\n\n" + schema.print());
 		}
 
 		public void enterTable (DDLParser.TableContext ctx) {
@@ -86,7 +105,7 @@ public class HecateParser {
 			t = new Table(tableName);
 		}
 		public void exitTable (DDLParser.TableContext ctx) {
-			s.addTable(t);
+			schema.addTable(t);
 		}
 
 		public void enterColumn (DDLParser.ColumnContext ctx) {
@@ -133,9 +152,9 @@ public class HecateParser {
 				String todo = ctx.parNameList().getText();
 				todo = todo.substring(1, todo.length()-1);
 				String[] names = todo.split(",");
-				for (String s : names) {
-					if (t.getAttrs().get(s) != null){
-						t.addAttrToPrimeKey(t.getAttrs().get(s));
+				for (String schema : names) {
+					if (t.getAttrs().get(schema) != null){
+						t.addAttrToPrimeKey(t.getAttrs().get(schema));
 					}
 				}
 			} else if (foundAlterConst) {
@@ -153,7 +172,7 @@ public class HecateParser {
 				if (reTableName.compareTo(orTable.getName()) == 0) {
 					reTable = t;
 				} else {
-					reTable = s.getTables().get(reTableName);
+					reTable = schema.getTables().get(reTableName);
 					if (reTable == null) {
 						unMached.add(new UnMach(orTable, ctx));
 						return;
@@ -161,8 +180,8 @@ public class HecateParser {
 				}
 			} else if (foundAlterConst) {
 //				System.out.println(alteringTable + " " + ctx.getText());
-				orTable = s.getTables().get(alteringTable);
-				reTable = s.getTables().get(reTableName);
+				orTable = schema.getTables().get(alteringTable);
+				reTable = schema.getTables().get(reTableName);
 			} else {
 				// this is not supposed to happen
 			}
@@ -180,7 +199,7 @@ public class HecateParser {
 
 		public void enterReference (DDLParser.ReferenceContext ctx) {
 			Table orTable = t;
-			Table reTable = s.getTables().get(ctx.reference_definition().table_name().getText());
+			Table reTable = schema.getTables().get(ctx.reference_definition().table_name().getText());
 			Attribute or = a;
 			Attribute[] re = getNames(ctx.reference_definition().parNameList().getText(), reTable);
 			orTable.getfKey().addReference(or, re[0]);
@@ -191,7 +210,7 @@ public class HecateParser {
 				DDLParser.ForeignContext ctx = item.ctx;
 				Table orTable = item.orT;
 				String reTableName = ctx.reference_definition().table_name().getText();
-				Table reTable = s.getTables().get(reTableName);
+				Table reTable = schema.getTables().get(reTableName);
 				if (reTable == null) {
 					// still not found ... ignore
 					continue;
@@ -209,9 +228,9 @@ public class HecateParser {
 			}
 		}
 
-		private Attribute[] getNames(String s, Table table) {
-			s = s.substring(1, s.length()-1);
-			String[] names = s.split(",");
+		private Attribute[] getNames(String schema, Table table) {
+			schema = schema.substring(1, schema.length()-1);
+			String[] names = schema.split(",");
 			Attribute[] res = new Attribute[names.length];
 			for (int i = 0; i < names.length; i++) {
 				res[i] = table.getAttrs().get(names[i]);
@@ -219,8 +238,8 @@ public class HecateParser {
 			return res;
 		}
 
-		private boolean hasQuotes(String s) {
-			switch (s.charAt(0)) {
+		private boolean hasQuotes(String schema) {
+			switch (schema.charAt(0)) {
 				case '\'':
 				case '\"':
 				case '`':
@@ -230,13 +249,13 @@ public class HecateParser {
 			}
 		}
 
-		private String removeQuotes(String s) {
-			if (hasQuotes(s)) {
+		private String removeQuotes(String schema) {
+			if (hasQuotes(schema)) {
 				String res = null;
-				res = s.substring(1, s.length()-1);
+				res = schema.substring(1, schema.length()-1);
 				return res;
 			}
-			return s;
+			return schema;
 		}
 	}
 }
