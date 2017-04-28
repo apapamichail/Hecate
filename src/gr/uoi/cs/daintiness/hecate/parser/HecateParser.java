@@ -27,11 +27,11 @@ public class HecateParser implements ParserInterface {
 
 	static class UnMach {
 		Table orT;
-		DDLParser.ForeignContext ctx;
+		DDLParser.ForeignContext context;
 		
-		public UnMach(Table orT, DDLParser.ForeignContext ctx) {
+		public UnMach(Table orT, DDLParser.ForeignContext context) {
 			this.orT = orT;
-			this.ctx = ctx;
+			this.context = context;
 		}
 	}
 
@@ -83,7 +83,7 @@ public class HecateParser implements ParserInterface {
 	}
 	private static class SchemaLoader extends DDLBaseListener {
 
-		private Table t;
+		private Table table;
 		private Attribute a;
 		boolean foundTableConst = false;
 		boolean foundAlterConst = false;
@@ -91,102 +91,102 @@ public class HecateParser implements ParserInterface {
 		String alteringTable = null;
 		List<UnMach> unMached = new ArrayList<HecateParser.UnMach>();
 
-		public void enterStart (DDLParser.StartContext ctx) {
+		public void enterStart (DDLParser.StartContext context) {
 //			System.out.println("Starting");
 			schema = new Schema();
 		}
-		public void exitStart (DDLParser.StartContext ctx) {
+		public void exitStart (DDLParser.StartContext context) {
 			processUnmached();
 //			System.out.println("\n\n\n" + schema.print());
 		}
 
-		public void enterTable (DDLParser.TableContext ctx) {
-			String tableName = removeQuotes(ctx.table_name().getText());
-			t = new Table(tableName);
+		public void enterTable (DDLParser.TableContext context) {
+			String tableName = removeQuotes(context.table_name().getText());
+			table = new Table(tableName);
 		}
-		public void exitTable (DDLParser.TableContext ctx) {
-			schema.addTable(t);
+		public void exitTable (DDLParser.TableContext context) {
+			schema.addTable(table);
 		}
 
-		public void enterColumn (DDLParser.ColumnContext ctx) {
-			String colName = removeQuotes(ctx.col_name().getText());
-			String colType = ctx.data_type().getText();
+		public void enterColumn (DDLParser.ColumnContext context) {
+			String colName = removeQuotes(context.col_name().getText());
+			String colType = context.data_type().getText();
 			colType = colType.toUpperCase();
 			a = new Attribute(colName, colType);
 		}
 
-		public void exitColumn (DDLParser.ColumnContext ctx) {
-			t.addAttribute(a);
+		public void exitColumn (DDLParser.ColumnContext context) {
+			table.addAttribute(a);
 		}
 
-		public void enterLine_constraint(DDLParser.Line_constraintContext ctx) {
+		public void enterLine_constraint(DDLParser.Line_constraintContext context) {
 			foundLineConst = true;
 		}
-		public void exitLine_constraint(DDLParser.Line_constraintContext ctx) {
+		public void exitLine_constraint(DDLParser.Line_constraintContext context) {
 			foundLineConst = false;
 		}
 
-		public void enterAlter_statement(DDLParser.Alter_statementContext ctx) {
-			alteringTable = ctx.table_name().getText();
+		public void enterAlter_statement(DDLParser.Alter_statementContext context) {
+			alteringTable = context.table_name().getText();
 		}
-		public void exitAlter_statement(DDLParser.Alter_statementContext ctx) {
+		public void exitAlter_statement(DDLParser.Alter_statementContext context) {
 			alteringTable = null;
 		}
 
-		public void enterTable_constraint(DDLParser.Table_constraintContext ctx) {
+		public void enterTable_constraint(DDLParser.Table_constraintContext context) {
 			foundTableConst = true;
 		}
-		public void exitTable_constraint(DDLParser.Table_constraintContext ctx) {
+		public void exitTable_constraint(DDLParser.Table_constraintContext context) {
 			foundTableConst = false;
 		}
 
-		public void enterAlter_constraint(DDLParser.Alter_constraintContext ctx) {
+		public void enterAlter_constraint(DDLParser.Alter_constraintContext context) {
 			foundAlterConst = true;
 		}
-		public void exitAlter_constraint(DDLParser.Alter_constraintContext ctx) {
+		public void exitAlter_constraint(DDLParser.Alter_constraintContext context) {
 			foundAlterConst = true;
 		}
 
-		public void enterPrimary (DDLParser.PrimaryContext ctx) {
+		public void enterPrimary (DDLParser.PrimaryContext context) {
 			if (foundTableConst) {
-				String todo = ctx.parNameList().getText();
+				String todo = context.parNameList().getText();
 				todo = todo.substring(1, todo.length()-1);
 				String[] names = todo.split(",");
 				for (String schema : names) {
-					if (t.getAttrs().get(schema) != null){
-						t.addAttrToPrimeKey(t.getAttrs().get(schema));
+					if (table.getAttrs().get(schema) != null){
+						table.addAttrToPrimeKey(table.getAttrs().get(schema));
 					}
 				}
 			} else if (foundAlterConst) {
 			} else if (foundLineConst){
-				t.addAttrToPrimeKey(a);
+				table.addAttrToPrimeKey(a);
 			} else {}
 		}
 
-		public void enterForeign (DDLParser.ForeignContext ctx) {
+		public void enterForeign (DDLParser.ForeignContext context) {
 			Table orTable = null, reTable = null;
 			Attribute[] or, re;
-			String reTableName = ctx.reference_definition().table_name().getText();
+			String reTableName = context.reference_definition().table_name().getText();
 			if (foundTableConst) {
-				orTable = t;
+				orTable = table;
 				if (reTableName.compareTo(orTable.getName()) == 0) {
-					reTable = t;
+					reTable = table;
 				} else {
 					reTable = schema.getTables().get(reTableName);
 					if (reTable == null) {
-						unMached.add(new UnMach(orTable, ctx));
+						unMached.add(new UnMach(orTable, context));
 						return;
 					}
 				}
 			} else if (foundAlterConst) {
-//				System.out.println(alteringTable + " " + ctx.getText());
+//				System.out.println(alteringTable + " " + context.getText());
 				orTable = schema.getTables().get(alteringTable);
 				reTable = schema.getTables().get(reTableName);
 			} else {
 				// this is not supposed to happen
 			}
-			or = getNames(ctx.parNameList().getText(), orTable);
-			re = getNames(ctx.reference_definition().parNameList().getText(), reTable);
+			or = getNames(context.parNameList().getText(), orTable);
+			re = getNames(context.reference_definition().parNameList().getText(), reTable);
 			for (int i = 0; i < or.length; i++) {
 				if (or[i] == null || re[i] == null) {
 					// sql typo???
@@ -197,26 +197,26 @@ public class HecateParser implements ParserInterface {
 			}
 		}
 
-		public void enterReference (DDLParser.ReferenceContext ctx) {
-			Table orTable = t;
-			Table reTable = schema.getTables().get(ctx.reference_definition().table_name().getText());
+		public void enterReference (DDLParser.ReferenceContext context) {
+			Table orTable = table;
+			Table reTable = schema.getTables().get(context.reference_definition().table_name().getText());
 			Attribute or = a;
-			Attribute[] re = getNames(ctx.reference_definition().parNameList().getText(), reTable);
+			Attribute[] re = getNames(context.reference_definition().parNameList().getText(), reTable);
 			orTable.getfKey().addReference(or, re[0]);
 		}
 
 		private void processUnmached() {
 			for (UnMach item : unMached) {
-				DDLParser.ForeignContext ctx = item.ctx;
+				DDLParser.ForeignContext context = item.context;
 				Table orTable = item.orT;
-				String reTableName = ctx.reference_definition().table_name().getText();
+				String reTableName = context.reference_definition().table_name().getText();
 				Table reTable = schema.getTables().get(reTableName);
 				if (reTable == null) {
 					// still not found ... ignore
 					continue;
 				}
-				Attribute[] or = getNames(ctx.parNameList().getText(), orTable);
-				Attribute[] re = getNames(ctx.reference_definition().parNameList().getText(), reTable);
+				Attribute[] or = getNames(context.parNameList().getText(), orTable);
+				Attribute[] re = getNames(context.reference_definition().parNameList().getText(), reTable);
 				for (int i = 0; i < or.length; i++) {
 					if (or[i] == null || re[i] == null) {
 						// sql typo???
@@ -231,11 +231,11 @@ public class HecateParser implements ParserInterface {
 		private Attribute[] getNames(String schema, Table table) {
 			schema = schema.substring(1, schema.length()-1);
 			String[] names = schema.split(",");
-			Attribute[] res = new Attribute[names.length];
+			Attribute[] result = new Attribute[names.length];
 			for (int i = 0; i < names.length; i++) {
-				res[i] = table.getAttrs().get(names[i]);
+				result[i] = table.getAttrs().get(names[i]);
 			}
-			return res;
+			return result;
 		}
 
 		private boolean hasQuotes(String schema) {
@@ -251,9 +251,9 @@ public class HecateParser implements ParserInterface {
 
 		private String removeQuotes(String schema) {
 			if (hasQuotes(schema)) {
-				String res = null;
-				res = schema.substring(1, schema.length()-1);
-				return res;
+				String result = null;
+				result = schema.substring(1, schema.length()-1);
+				return result;
 			}
 			return schema;
 		}
