@@ -10,24 +10,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Queue;
+
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.media.jfxmedia.logging.Logger;
 
-import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
 import gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesManager;
-import gr.uoi.cs.daintiness.hecate.io.*;
-import gr.uoi.cs.daintiness.hecate.io.MetricsExport;
-import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
-import gr.uoi.cs.daintiness.hecate.sql.Schema;
-import gr.uoi.cs.daintiness.hecate.sql.Table;
-import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
+
+
 
 /**
  * @author angeloASDA
@@ -51,64 +42,70 @@ public class SchemataDifferencesManagerTest {
 	}
 
 	public void readSchemaHistory(String schemaFolder) throws IOException {
-		DifferencesResult res = new DifferencesResult();
-		res.clear();
-		Transitions trs = new Transitions();
-		File folder = new File("tests/schemata/" + schemaFolder + "/schemata");
-		String[] list = folder.list();
-		String path = folder.getAbsolutePath();
-		java.util.Arrays.sort(list);
-
-		MetricsExport.initMetrics(path);
-		for (int i = 0; i < list.length - 1; i++) {
-			Schema schema = HecateParser.parse(path + File.separator + list[i]);
-			for (Entry<String, Table> e : schema.getTables().entrySet()) {
-				String tname = e.getKey();
-				int attrs = e.getValue().getSize();
-				res.tablesInfo.addTable(tname, i, attrs);
-			}
-			Schema schema2 = HecateParser.parse(path + File.separator + list[i + 1]);
-			if (i == list.length - 2) {
-				for (Entry<String, Table> e : schema2.getTables().entrySet()) {
-					String tname = e.getKey();
-					int attrs = e.getValue().getSize();
-					res.tablesInfo.addTable(tname, i + 1, attrs);
-				}
-			}
-			res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema, schema2);
-			trs.add(res.myTransformationList);
-			MetricsExport.metrics(res, path);
-		}
-		try {
-			csvExport.tables(path, res.myMetrics.getNumRevisions() + 1, res.tablesInfo);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		xmlExport.xml(trs, path);
-
-		folder = null;
+		
+		SchemataDifferencesManager schemaManager = new SchemataDifferencesManager();
+		schemaManager.getDifferencesInSchemataHistoryAndExport(new File("tests/schemata/" + schemaFolder + "/schemata"));
+		
+//		DifferencesResult res = new DifferencesResult();
+//		res.clear();
+//		Transitions trs = new Transitions();
+//		File folder = new File("tests/schemata/" + schemaFolder + "/schemata");
+//		String[] list = folder.list();
+//		String path = folder.getAbsolutePath();
+//		java.util.Arrays.sort(list);
+//
+//		MetricsExport.initMetrics(path);
+//		for (int i = 0; i < list.length - 1; i++) {
+//			Schema schema = HecateParser.parse(path + File.separator + list[i]);
+//			for (Entry<String, Table> e : schema.getTables().entrySet()) {
+//				String tname = e.getKey();
+//				int attrs = e.getValue().getSize();
+//				res.tablesInfo.addTable(tname, i, attrs);
+//			}
+//			Schema schema2 = HecateParser.parse(path + File.separator + list[i + 1]);
+//			if (i == list.length - 2) {
+//				for (Entry<String, Table> e : schema2.getTables().entrySet()) {
+//					String tname = e.getKey();
+//					int attrs = e.getValue().getSize();
+//					res.tablesInfo.addTable(tname, i + 1, attrs);
+//				}
+//			}
+//			res = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schema, schema2);
+//			trs.add(res.myTransformationList);
+//			MetricsExport.metrics(res, path);
+//		}
+//		try {
+//			csvExport.tables(path, res.myMetrics.getNumRevisions() + 1, res.tablesInfo);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		xmlExport.xml(trs, path);
+//
+//		folder = null;
 
 	}
 
 	@Test
 	public void test() {
 		try {
-			String csvFiles[] = { "all.csv", "metrics.csv", "table_del.csv", "table_ins.csv", "table_key.csv",
-					"table_stats.csv", "table_type.csv", "tables.csv" };
+			String filesToCheck[] = { "all.csv", "metrics.csv", "table_del.csv", "table_ins.csv", "table_key.csv",
+					"table_stats.csv", "table_type.csv", "tables.csv", "transitions.xml" };
 
 			for (int i = 0; i < schemaFolder.length; i++) {
-				for (int j = 0; j < csvFiles.length; j++) {
+				for (int j = 0; j < filesToCheck.length; j++) {
 
 					BufferedReader rightMetricsReader = new BufferedReader(
-							new FileReader("tests/schemata/" + schemaFolder[i] + "/rightresults/" + csvFiles[j]));
+							new FileReader("tests/schemata/" + schemaFolder[i] + "/rightresults/" + filesToCheck[j]));
 					BufferedReader producedMetricsReader = new BufferedReader(
-							new FileReader("tests/schemata/" + schemaFolder[i] + "/results/" + csvFiles[j]));
+							new FileReader("tests/schemata/" + schemaFolder[i] + "/results/" + filesToCheck[j]));
 
 					String rightLine = "";
 					String producedLine = "";
 					String cvsSplitBy = ";";
+					int line =0;
 					while ((rightLine = rightMetricsReader.readLine()) != null) {
+						line +=1;
 						if ((producedLine = producedMetricsReader.readLine()) == null) {
 							assertNull(producedLine);
 						}
@@ -119,7 +116,7 @@ public class SchemataDifferencesManagerTest {
 
 							if (rightMetrics[i1].equals(producedMetrics[i1]) == false)
 								fail("Expected :" + rightMetrics[i1] + ", Found :" + producedMetrics[i1] + " in "
-										+ schemaFolder[i]);
+										+ schemaFolder[i] +" line : "+line +" of file : "+filesToCheck[j]);
 
 						}
 					}

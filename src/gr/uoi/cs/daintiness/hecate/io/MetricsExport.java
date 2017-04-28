@@ -11,6 +11,7 @@ public class MetricsExport extends Export {
 	
 	public static void metrics(DifferencesResult result, String path)
 			throws IOException {
+
 		String filePath = Export.getDir(path) + File.separator + "metrics.csv";
 		FileWriter filewriter = new FileWriter(filePath, true);
 		BufferedWriter metrics = new BufferedWriter(filewriter);
@@ -36,6 +37,7 @@ public class MetricsExport extends Export {
 			);
 		metrics.close();
 	}
+	
 	public static void initMetrics(String path) throws IOException {
 		String filePath = Export.getDir(path) + File.separator + "metrics.csv";
 		BufferedWriter metrics = new BufferedWriter(new FileWriter(filePath));

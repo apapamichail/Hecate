@@ -32,6 +32,7 @@ public class SchemataDifferencesTools {
 	 */
 	public static void setUp(Schema schemaA, Schema schemaB) {
 		results = new DifferencesResult();
+		
 		results.myMetrics.newRevision();
 		results.setVersionNames(schemaA.getName(), schemaB.getName());
 		oldTableKeys = schemaA.getTables().keySet().iterator();

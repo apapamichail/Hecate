@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.14" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesManager" 
-    project="Hecate" file="/Hecate/src/gr/uoi/cs/daintiness/hecate/differencedetection/SchemataDifferencesManager.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="28" y="629"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="2" language="java" name="gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult" 
+  <class id="1" language="java" name="gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult" 
     project="Hecate" file="/Hecate/src/gr/uoi/cs/daintiness/hecate/differencedetection/DifferencesResult.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="379" y="630"/>    
@@ -21,7 +11,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesTools" 
+  <class id="2" language="java" name="gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesTools" 
     project="Hecate" file="/Hecate/src/gr/uoi/cs/daintiness/hecate/differencedetection/SchemataDifferencesTools.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="675" width="337" x="69" y="-201"/>    
@@ -31,22 +21,32 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
+  <class id="3" language="java" name="gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesManager" 
+    project="Hecate" file="/Hecate/src/gr/uoi/cs/daintiness/hecate/differencedetection/SchemataDifferencesManager.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="863" y="225"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
   <association id="4">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="5" name="results"/>      
-      <multiplicity id="6" minimum="0" maximum="1"/>    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="5" name="results">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="6" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <dependency id="7">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="1"/>  
   </dependency>  
-  <generalization id="8">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
