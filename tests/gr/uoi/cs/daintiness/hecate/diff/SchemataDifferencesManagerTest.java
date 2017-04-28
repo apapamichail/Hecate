@@ -36,7 +36,7 @@ import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
  */
 public class SchemataDifferencesManagerTest {
 	File schemata;
-	//insert more if u like
+	// insert more if u like
 	public String[] schemaFolder = { "DekiWiki", "biosql" };
 
 	/**
@@ -54,7 +54,7 @@ public class SchemataDifferencesManagerTest {
 		DifferencesResult res = new DifferencesResult();
 		res.clear();
 		Transitions trs = new Transitions();
-		File folder = new File("tests/schemata/" + schemaFolder+"/schemata");
+		File folder = new File("tests/schemata/" + schemaFolder + "/schemata");
 		String[] list = folder.list();
 		String path = folder.getAbsolutePath();
 		java.util.Arrays.sort(list);
@@ -94,47 +94,52 @@ public class SchemataDifferencesManagerTest {
 	@Test
 	public void test() {
 		try {
+			String csvFiles[] = { "all.csv", "metrics.csv", "table_del.csv", "table_ins.csv", "table_key.csv",
+					"table_stats.csv", "table_type.csv", "tables.csv" };
+
 			for (int i = 0; i < schemaFolder.length; i++) {
-				BufferedReader rightMetricsReader = new BufferedReader(
-						new FileReader("tests/schemata/" + schemaFolder[i] + "/rightresults/metrics.csv"));
-				BufferedReader producedMetricsReader = new BufferedReader(
-						new FileReader("tests/schemata/" + schemaFolder[i] + "/results/metrics.csv"));
+				for (int j = 0; j < csvFiles.length; j++) {
 
-				String rightLine = "";
-				String producedLine = "";
-				String cvsSplitBy = ";";
-				while ((rightLine = rightMetricsReader.readLine()) != null) {
-					if ((producedLine = producedMetricsReader.readLine()) == null) {
-						assertNull(producedLine);
+					BufferedReader rightMetricsReader = new BufferedReader(
+							new FileReader("tests/schemata/" + schemaFolder[i] + "/rightresults/" + csvFiles[j]));
+					BufferedReader producedMetricsReader = new BufferedReader(
+							new FileReader("tests/schemata/" + schemaFolder[i] + "/results/" + csvFiles[j]));
+
+					String rightLine = "";
+					String producedLine = "";
+					String cvsSplitBy = ";";
+					while ((rightLine = rightMetricsReader.readLine()) != null) {
+						if ((producedLine = producedMetricsReader.readLine()) == null) {
+							assertNull(producedLine);
+						}
+						// use comma as separator
+						String[] rightMetrics = rightLine.split(cvsSplitBy);
+						String[] producedMetrics = producedLine.split(cvsSplitBy);
+						for (int i1 = 0; i1 < rightMetrics.length; i1++) {
+
+							if (rightMetrics[i1].equals(producedMetrics[i1]) == false)
+								fail("Expected :" + rightMetrics[i1] + ", Found :" + producedMetrics[i1] + " in "
+										+ schemaFolder[i]);
+
+						}
 					}
-					// use comma as separator
-					String[] rightMetrics = rightLine.split(cvsSplitBy);
-					String[] producedMetrics = producedLine.split(cvsSplitBy);
-					for (int i1 = 0; i1 < rightMetrics.length; i1++) {
+					rightMetricsReader.close();
+					producedMetricsReader.close();
 
-						if (rightMetrics[i1].equals(producedMetrics[i1]) == false)
-							fail("Expected :" + rightMetrics[i1] + ", Found :" + producedMetrics[i1]+" in "+schemaFolder[i] );
-
-					}
 				}
-
-				rightMetricsReader.close();
-				producedMetricsReader.close();
-
-			
 
 			}
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			fail("FileNotFoundException");
-		
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("IOException");
 		}
 	}
-	
+
 	public void checkSchemaResults(String schemaFolder) throws IOException {
 		BufferedReader rightMetricsReader = new BufferedReader(
 				new FileReader("tests/schemata/" + schemaFolder + "rightresults/metrics.csv"));
