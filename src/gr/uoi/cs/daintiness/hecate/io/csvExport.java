@@ -13,7 +13,7 @@
 	
 	public class csvExport extends Export {
 
-		public static void tables(String path, int versions, TablesInfo tableinfo) {
+		public static void tablesCSV(String path, int versions, TablesInfo tableinfo) {
 			String slashedPath = Export.getDir(path) + File.separator;
 			String sTab = slashedPath + "tables.csv";
 			String sTabI = slashedPath + "table_ins.csv";
