@@ -70,7 +70,7 @@ public class SchemataDifferencesManager {
 			
 		}
 		try {
-			csvExport.tables(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
+			csvExport.tablesCSV(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

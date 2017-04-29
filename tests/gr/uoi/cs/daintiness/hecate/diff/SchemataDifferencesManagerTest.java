@@ -42,7 +42,6 @@ public class SchemataDifferencesManagerTest {
 	}
 
 	public void readSchemaHistory(String schemaFolder) throws IOException {
-<<<<<<< HEAD
 		
 		SchemataDifferencesManager schemaManager = new SchemataDifferencesManager();
 		schemaManager.getDifferencesInSchemataHistoryAndExport(new File("tests/schemata/" + schemaFolder + "/schemata"));
@@ -84,46 +83,6 @@ public class SchemataDifferencesManagerTest {
 //		xmlExport.xml(trs, path);
 //
 //		folder = null;
-=======
-		DifferencesResult res = new DifferencesResult();
-		res.clear();
-		Transitions trs = new Transitions();
-		File folder = new File("tests/schemata/" + schemaFolder + "/schemata");
-		String[] list = folder.list();
-		String path = folder.getAbsolutePath();
-		java.util.Arrays.sort(list);
-
-		MetricsExport.initMetrics(path);
-		for (int i = 0; i < list.length - 1; i++) {
-			Schema schema = HecateParser.parse(path + File.separator + list[i]);
-			for (Entry<String, Table> e : schema.getTables().entrySet()) {
-				String tname = e.getKey();
-				int attrs = e.getValue().getSize();
-				res.tablesInfo.addTable(tname, i, attrs);
-			}
-			Schema schema2 = HecateParser.parse(path + File.separator + list[i + 1]);
-			if (i == list.length - 2) {
-				for (Entry<String, Table> e : schema2.getTables().entrySet()) {
-					String tname = e.getKey();
-					int attrs = e.getValue().getSize();
-					res.tablesInfo.addTable(tname, i + 1, attrs);
-				}
-			}
-			res = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schema, schema2);
-			trs.add(res.myTransformationList);
-			MetricsExport.metrics(res, path);
-		}
-		try {
-			csvExport.tablesCSV(path, res.myMetrics.getNumRevisions() + 1, res.tablesInfo);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		xmlExport.xml(trs, path);
-
-		folder = null;
->>>>>>> origin/master
-
 	}
 
 	@Test

@@ -64,40 +64,6 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 			oldSchema = HecateParser.parse(folder.getAbsolutePath() + File.separator + folder.list()[0]);
 			newSchema = HecateParser.parse(folder.getAbsolutePath() + File.separator + folder.list()[folder.list().length-1]);
 			result = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
-
-<<<<<<< HEAD
-=======
-					String tablename = e.getKey();
-					int attributes = e.getValue().getSize();
-					result.tablesInfo.addTable(tablename, i, attributes);
-				}
-				progressmonitor.setNote("Parsing " + folders[i+1]);
-				Schema schemaB = HecateParser.parse(path + File.separator + folders[i+1]);
-				if (i == folders.length-2) {
-					for (Entry<String, Table> e : schemaB.getTables().entrySet()) {
-						String tablename = e.getKey();
-						int attributes = e.getValue().getSize();
-						result.tablesInfo.addTable(tablename, i+1, attributes);
-					}
-				}
-				progressmonitor.setNote(folders[i] + "-" + folders[i+1]);
-				result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(schemaA, schemaB);
-				transitions.add(result.myTransformationList);
-				MetricsExport.metrics(result, path);
-				progressmonitor.setProgress(i+1);
-			}
-			try {
-				csvExport.tablesCSV(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			xmlExport.xml(transitions, path);
-			oldSchema = HecateParser.parse(path + File.separator + folders[0]);
-			newSchema = HecateParser.parse(path + File.separator + folders[folders.length-1]);
-			result = SchemataDifferencesManager.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
-			folder = null;
->>>>>>> origin/master
 		}
 
 
