@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-
 /**
  * A dialog displaying Hecates information
  * @author giskou
@@ -27,6 +26,10 @@ public class AboutDialog extends JDialog {
 	private JLabel author;
 	private JLabel mail;
 	private JButton close;
+	private JLabel informationRED;
+	private JLabel informationGREEN;
+	private JLabel informationYELLOW;
+	private JLabel informationWHITE;
 	private ImageIcon hecateIcon;
 
 	public AboutDialog() {
@@ -60,7 +63,30 @@ public class AboutDialog extends JDialog {
 		add(mail);
 
 		add(Box.createRigidArea(new Dimension(0, 15)));
-
+		informationRED = new JLabel("RED COLOUR MEANS DELETION");
+		informationRED.setFont(new Font("Calibri", Font.BOLD, 14));
+		informationRED.setAlignmentX(CENTER_ALIGNMENT);
+		add(informationRED);
+		
+		add(Box.createRigidArea(new Dimension(0, 15)));
+		informationGREEN = new JLabel("GREEN COLOUR MEANS ADDITION");
+		informationGREEN.setFont(new Font("Calibri", Font.BOLD, 14));
+		informationGREEN.setAlignmentX(CENTER_ALIGNMENT);
+		add(informationGREEN);
+		add(Box.createRigidArea(new Dimension(0, 15)));
+		
+		informationYELLOW = new JLabel("YELLOW COLOUR MEANS ALTERATION");
+		informationYELLOW.setFont(new Font("Calibri", Font.BOLD, 14));
+		informationYELLOW.setAlignmentX(CENTER_ALIGNMENT);
+		add(informationYELLOW);
+		add(Box.createRigidArea(new Dimension(0, 15)));
+		
+		informationWHITE = new JLabel("WHITE COLOUR MEANS NO CHANGES");
+		informationWHITE.setFont(new Font("Calibri", Font.BOLD, 14));
+		informationWHITE.setAlignmentX(CENTER_ALIGNMENT);
+		add(informationWHITE);
+		add(Box.createRigidArea(new Dimension(0, 15)));
+		
 		close = new JButton("Close");
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
