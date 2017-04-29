@@ -1,4 +1,4 @@
-package gr.uoi.cs.daintiness.hecate.diff;
+package gr.uoi.cs.daintiness.hecate.differencedetection;
 
 import gr.uoi.cs.daintiness.hecate.metrics.tables.ChangeType;
 import gr.uoi.cs.daintiness.hecate.sql.Attribute;

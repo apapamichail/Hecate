@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gr.uoi.cs.daintiness.hecate.diff;
+package gr.uoi.cs.daintiness.hecate.differencedetection;
 
 import gr.uoi.cs.daintiness.hecate.metrics.Metrics;
 import gr.uoi.cs.daintiness.hecate.metrics.tables.TablesInfo;
