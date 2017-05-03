@@ -18,7 +18,7 @@ import java.util.Iterator;
  * @author giskou
  *
  */
-public class DifferencesAlgorithmSkoulis implements Algorithm  {
+public class DifferencesAlgorithmSkoulis implements DifferencesAlgorithm  {
 
   	
 	//refactoring customizations the idea is to put them global so we can refactor

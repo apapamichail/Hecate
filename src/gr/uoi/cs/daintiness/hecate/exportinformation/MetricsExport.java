@@ -45,4 +45,10 @@ public class MetricsExport extends Export {
 				+ ";tIns;tDel;aIns;aDel;aTypeAlt;keyAlt;aTabIns;aTabDel\n");
 		metrics.close();
 	}
+
+	@Override
+	void export() {
+		// TODO Auto-generated method stub
+		
+	}
 }

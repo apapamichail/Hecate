@@ -12,6 +12,7 @@ import gr.uoi.cs.daintiness.hecate.transitions.Deletion;
 import gr.uoi.cs.daintiness.hecate.transitions.Insersion;
 import gr.uoi.cs.daintiness.hecate.transitions.Update;
 
+@Deprecated
 public class SchemataDifferencesHelper {
 
 //	public  Insersion in;

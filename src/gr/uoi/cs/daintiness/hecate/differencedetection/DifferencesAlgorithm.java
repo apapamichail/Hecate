@@ -1,11 +1,10 @@
 package gr.uoi.cs.daintiness.hecate.differencedetection;
 
-import gr.uoi.cs.daintiness.hecate.sql.Attribute;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 import gr.uoi.cs.daintiness.hecate.sql.SqlItem;
 import gr.uoi.cs.daintiness.hecate.sql.Table;
 
-public interface Algorithm {
+public interface DifferencesAlgorithm {
 
 	/**
 	 * This function performs the main diff algorithm for
