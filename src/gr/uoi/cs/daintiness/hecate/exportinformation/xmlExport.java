@@ -13,7 +13,8 @@ import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
 import gr.uoi.cs.daintiness.hecate.transitions.Update;
 
 public class xmlExport extends Export{
-	public static void xml(Transitions transition, String path) {
+	@Override
+	public void export(Transitions transition, String path) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Update.class,
 					Deletion.class, Insersion.class,
@@ -25,6 +26,12 @@ public class xmlExport extends Export{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	void export() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

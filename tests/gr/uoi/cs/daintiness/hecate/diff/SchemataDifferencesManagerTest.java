@@ -44,7 +44,7 @@ public class SchemataDifferencesManagerTest {
 	public void readSchemaHistory(String schemaFolder) throws IOException {
 		
 		SchemataDifferencesManager schemaManager = new SchemataDifferencesManager();
-		schemaManager.getDifferencesInSchemataHistoryAndExport(new File("tests/schemata/" + schemaFolder + "/schemata"));
+		schemaManager.checkDifferencesInSchemataHistoryAndExport(new File("tests/schemata/" + schemaFolder + "/schemata"));
 		
 //		DifferencesResult res = new DifferencesResult();
 //		res.clear();

@@ -14,15 +14,16 @@ import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
 
 public class SchemataDifferencesManager {
 	
-	public DifferencesResult getDifferencesBetweenTwoRevisions(File oldFile, File newFile) {
-		Algorithm differencesAlgorithm = new DifferencesAlgorithmSkoulis();
+	public DifferencesResult getDifferencesBetweenTwoRevisions(Schema oldSchema, Schema newSchema) {
+		AlgorithmFactory algorithmFactory = new AlgorithmFactory();
+		
+		DifferencesAlgorithm differencesAlgorithm = algorithmFactory.getAlgorithm("DifferencesAlgorithmSkoulis");
 
-		DifferencesResult result;
-		Schema oldSchema = getSchema(oldFile.getAbsolutePath());
-		Schema newSchema = getSchema(newFile.getAbsolutePath());
+		DifferencesResult result =new DifferencesResult();
+		result.clear();
+
 		result = differencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
-		oldFile = null;
-		newFile = null;
+
 		return result;
 	}
 	
@@ -35,17 +36,20 @@ public class SchemataDifferencesManager {
 	 * @return
 	 * @throws IOException
 	 */
-	public DifferencesResult getDifferencesInSchemataHistoryAndExport(File folder) throws IOException {
+	public DifferencesResult checkDifferencesInSchemataHistoryAndExport(File folder) throws IOException {
 		DifferencesResult result = new DifferencesResult();
+		AlgorithmFactory algorithmFactory = new AlgorithmFactory();
 		Transitions transitions = new Transitions();
-		Algorithm differencesAlgorithm = new DifferencesAlgorithmSkoulis();
-
+		DifferencesAlgorithm differencesAlgorithm = algorithmFactory.getAlgorithm("DifferencesAlgorithmSkoulis");
+		MetricsExport metricsExport = new MetricsExport();
+		csvExport exportToCSV = new csvExport();
+		xmlExport exportToXML = new xmlExport();
 		String[] folders = folder.list();
 
 		String path = folder.getAbsolutePath();
 		java.util.Arrays.sort(folders);
 
-		MetricsExport.initMetrics(path);
+		metricsExport.initMetrics(path);
 		
 		result.clear();
 		
@@ -74,16 +78,16 @@ public class SchemataDifferencesManager {
 			
 			transitions.add(result.myTransformationList);
 			
-			MetricsExport.metrics(result, path);
+			metricsExport.metrics(result, path);
 			
 		}
 		try {
-			csvExport.tablesCSV(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
+			exportToCSV.tablesCSV(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		xmlExport.xml(transitions, path);
+		exportToXML.export(transitions, path);
 		
 		Schema oldSchema = HecateParser.parse(path + File.separator + folders[0]);
 		Schema newSchema = HecateParser.parse(path + File.separator + folders[folders.length-1]);
