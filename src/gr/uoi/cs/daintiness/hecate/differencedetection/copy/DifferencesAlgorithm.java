@@ -1,4 +1,4 @@
-package gr.uoi.cs.daintiness.hecate.differencedetection;
+package gr.uoi.cs.daintiness.hecate.differencedetection.copy;
 
 import gr.uoi.cs.daintiness.hecate.metrics.tables.ChangeType;
 import gr.uoi.cs.daintiness.hecate.sql.Attribute;
@@ -18,13 +18,13 @@ import java.util.Iterator;
  * @author giskou
  *
  */
-public class DifferencesAlgorithm extends SchemataDifferencesTools{
+public class DifferencesAlgorithm {
 
   	
 	//refactoring customizations the idea is to put them global so we can refactor
-	static String oldTableKey = null, newTableKey = null ;
-	static String oldAttrKey = null, newAttrKey = null ;
-
+	private String oldTableKey = null, newTableKey = null ;
+	private String oldAttrKey = null, newAttrKey = null ;
+	private SchemataDifferencesHelper differencesHelper;
 	/**
 	 * This function performs the main diff algorithm for
 	 * finding the differences between the schemas that are 
@@ -48,11 +48,11 @@ public class DifferencesAlgorithm extends SchemataDifferencesTools{
 	 *   The modified version of the original schema
 	 */
 	
-	public static DifferencesResult getDifferencesBetweenTwoSchemata(Schema schemaA, Schema schemaB) {
+	public DifferencesResult getDifferencesBetweenTwoSchemata(Schema schemaA, Schema schemaB) {
+		differencesHelper = new SchemataDifferencesHelper();
 
-
-		setUp(schemaA, schemaB);
-
+		differencesHelper.setUp(schemaA, schemaB);
+		
 		if (oldTableKeys.hasNext() && newTableKeys.hasNext()){
 			oldTableKey = oldTableKeys.next() ;
 			Table oldTable = (Table) oldTableValues.next() ;
@@ -110,7 +110,7 @@ public class DifferencesAlgorithm extends SchemataDifferencesTools{
 	 * @param oldTable
 	 * @param newTable
 	 */
-	private static void findSameTablesDifferences(Table oldTable, Table newTable) {
+	private  void findSameTablesDifferences(Table oldTable, Table newTable) {
 		initializeAttributesKeys(oldTable, newTable);
 
 		initializeAttributesValues(oldTable, newTable);
@@ -132,7 +132,7 @@ public class DifferencesAlgorithm extends SchemataDifferencesTools{
 	 * @param oldTable
 	 * @param newTable
 	 */
-	private static void computeAttributesDifferences(Table oldTable, Table newTable) {
+	private  void computeAttributesDifferences(Table oldTable, Table newTable) {
 		String oldAttrKey;
 		String newAttrKey;
 		if (oldAttributeKeys.hasNext() && newAttributeKeys.hasNext()){

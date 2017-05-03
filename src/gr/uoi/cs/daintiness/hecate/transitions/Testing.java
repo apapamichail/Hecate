@@ -4,7 +4,7 @@
 package gr.uoi.cs.daintiness.hecate.transitions;
 
 import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
-import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesAlgorithm;
+import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesAlgorithmSkoulis;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 
@@ -29,14 +29,14 @@ public class Testing {
 		Schema schema2 = HecateParser.parse(path + "rev_008798.sql");
 		Schema schema3 = HecateParser.parse(path + "rev_019569.sql");
 		
-		Transitions trs = new Transitions();
-		res = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schema1, schema2);
-		trs.add(res.myTransformationList);
-		res = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schema2, schema3);
-		trs.add(res.myTransformationList);
-		res = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schema1, schema3);
-		trs.add(res.myTransformationList);
-		test(trs);
+//		Transitions trs = new Transitions();
+//		res = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schema1, schema2);
+//		trs.add(res.myTransformationList);
+//		res = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schema2, schema3);
+//		trs.add(res.myTransformationList);
+//		res = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schema1, schema3);
+//		trs.add(res.myTransformationList);
+//		test(trs);
 	}
 	
 	public static void test(Transitions tl) {

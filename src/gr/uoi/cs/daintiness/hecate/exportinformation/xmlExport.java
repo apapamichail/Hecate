@@ -1,4 +1,4 @@
-package gr.uoi.cs.daintiness.hecate.io;
+package gr.uoi.cs.daintiness.hecate.exportinformation;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -5,7 +5,7 @@ package gr.uoi.cs.daintiness.hecate.gui.swing;
 
 import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
 import gr.uoi.cs.daintiness.hecate.differencedetection.SchemataDifferencesManager;
-import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesAlgorithm;
+import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesAlgorithmSkoulis;
 import gr.uoi.cs.daintiness.hecate.parser.HecateParser;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 
@@ -49,11 +49,9 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 		
 		if (oldFile != null && newFile != null) {
 
-			oldSchema = HecateParser.parse(oldFile.getAbsolutePath());
-			newSchema = HecateParser.parse(newFile.getAbsolutePath());
-
+ 
 			
-			result = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
+			result = differencesManager.getDifferencesBetweenTwoRevisions(oldFile, newFile);
 			
 		} else if (folder != null){
 			/* Here i want to export everything
@@ -63,7 +61,9 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 			differencesManager.getDifferencesInSchemataHistoryAndExport(folder);
 			oldSchema = HecateParser.parse(folder.getAbsolutePath() + File.separator + folder.list()[0]);
 			newSchema = HecateParser.parse(folder.getAbsolutePath() + File.separator + folder.list()[folder.list().length-1]);
-			result = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
+			
+			result =  differencesManager.getDifferencesBetweenTwoRevisions(new File(folder.getAbsolutePath() + File.separator + folder.list()[0]), 
+					new File(folder.getAbsolutePath() + File.separator + folder.list()[folder.list().length-1]));
 		}
 
 

@@ -1,4 +1,4 @@
-package gr.uoi.cs.daintiness.hecate.io;
+package gr.uoi.cs.daintiness.hecate.exportinformation;
 
 import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
 import gr.uoi.cs.daintiness.hecate.metrics.tables.TablesInfo;

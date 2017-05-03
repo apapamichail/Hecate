@@ -1,4 +1,4 @@
-package gr.uoi.cs.daintiness.hecate.differencedetection;
+package gr.uoi.cs.daintiness.hecate.differencedetection.copy;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,19 +15,13 @@ import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
 public class SchemataDifferencesManager {
 	
 	public DifferencesResult getDifferencesBetweenTwoRevisions(File oldFile, File newFile) {
-		Algorithm differencesAlgorithm = new DifferencesAlgorithmSkoulis();
-
 		DifferencesResult result;
-		Schema oldSchema = getSchema(oldFile.getAbsolutePath());
-		Schema newSchema = getSchema(newFile.getAbsolutePath());
-		result = differencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
+		Schema oldSchema = HecateParser.parse(oldFile.getAbsolutePath());
+		Schema newSchema = HecateParser.parse(newFile.getAbsolutePath());
+		result = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
 		oldFile = null;
 		newFile = null;
 		return result;
-	}
-	
-	public Schema getSchema(String path){
-		return HecateParser.parse(path);
 	}
 	/**
 	 * @param result
@@ -38,9 +32,8 @@ public class SchemataDifferencesManager {
 	public DifferencesResult getDifferencesInSchemataHistoryAndExport(File folder) throws IOException {
 		DifferencesResult result = new DifferencesResult();
 		Transitions transitions = new Transitions();
-		Algorithm differencesAlgorithm = new DifferencesAlgorithmSkoulis();
-
 		String[] folders = folder.list();
+
 
 		String path = folder.getAbsolutePath();
 		java.util.Arrays.sort(folders);
@@ -51,8 +44,7 @@ public class SchemataDifferencesManager {
 		
 		for (int i = 0; i < folders.length-1; i++) {
 			//result.clear();
-			System.out.println(path + File.separator + folders[i]);
-			Schema schemaA = getSchema(path + File.separator + folders[i]);
+			Schema schemaA = HecateParser.parse(path + File.separator + folders[i]);
 			
 			for (Entry<String, Table> e : schemaA.getTables().entrySet()) {
 
@@ -61,7 +53,7 @@ public class SchemataDifferencesManager {
 				result.tablesInfo.addTable(tablename, i, attributes);
 			}
 			
-			Schema schemaB = getSchema(path + File.separator + folders[i+1]);
+			Schema schemaB = HecateParser.parse(path + File.separator + folders[i+1]);
 			if (i == folders.length-2) {
 				for (Entry<String, Table> e : schemaB.getTables().entrySet()) {
 					String tablename = e.getKey();
@@ -70,7 +62,7 @@ public class SchemataDifferencesManager {
 				}
 			}
 			
-			result = differencesAlgorithm.getDifferencesBetweenTwoSchemata(schemaA, schemaB);
+			result = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(schemaA, schemaB);
 			
 			transitions.add(result.myTransformationList);
 			
@@ -88,7 +80,7 @@ public class SchemataDifferencesManager {
 		Schema oldSchema = HecateParser.parse(path + File.separator + folders[0]);
 		Schema newSchema = HecateParser.parse(path + File.separator + folders[folders.length-1]);
 		result.clear();
-		result = differencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
+		result = DifferencesAlgorithm.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
 
 		return result;
 	}

@@ -12,25 +12,30 @@ import gr.uoi.cs.daintiness.hecate.transitions.Deletion;
 import gr.uoi.cs.daintiness.hecate.transitions.Insersion;
 import gr.uoi.cs.daintiness.hecate.transitions.Update;
 
-public class SchemataDifferencesTools {
+public class SchemataDifferencesHelper {
 
-	public static Insersion in;
-	public static Deletion out;
-	public static Update up;
-	public static Iterator<String> oldAttributeKeys;
-	public static Iterator<Attribute> oldAttributeValues;
-	public static Iterator<String> newAttributeKeys;
-	public static Iterator<Attribute> newAttributeValues;
-	public static Iterator<String> oldTableKeys;
-	public static Iterator<Table> oldTableValues;
-	public static Iterator<String> newTableKeys;
-	public static Iterator<Table> newTableValues;
-	public static DifferencesResult results;
+//	public  Insersion in;
+//	public  Deletion out;
+//	public  Update up;
+//	public  Iterator<String> oldAttributeKeys;
+//	public  Iterator<Attribute> oldAttributeValues;
+//	public  Iterator<String> newAttributeKeys;
+//	public  Iterator<Attribute> newAttributeValues;
+//	
+//	public  Iterator<String> oldTableKeys;
+//	public  Iterator<Table> oldTableValues;
+//	public  Iterator<String> newTableKeys;
+//	public  Iterator<Table> newTableValues;
+//	public  DifferencesResult results;
 
 	/**
 	 * 
 	 */
-	public static void setUp(Schema schemaA, Schema schemaB) {
+	
+	
+
+	
+	public  void setUp(Schema schemaA, Schema schemaB) {
 		results = new DifferencesResult();
 		
 		results.myMetrics.newRevision();
@@ -43,7 +48,7 @@ public class SchemataDifferencesTools {
 
 	}
 
-	public static void checkRemainingTableKeysforNew() {
+	public  void checkRemainingTableKeysforNew(Iterator<String> newTableKeys, Iterator<String> newTableValues) {
 		String newTableKey;
 		while (newTableKeys.hasNext()) {
 			newTableKey = (String) newTableKeys.next();
@@ -55,7 +60,7 @@ public class SchemataDifferencesTools {
 	/**
 	 * 
 	 */
-	public static void checkRemainingTableKeysforOld() {
+	public  void checkRemainingTableKeysforOld() {
 		String oldTableKey;
 		while (oldTableKeys.hasNext()) {
 			oldTableKey = (String) oldTableKeys.next();
@@ -63,11 +68,14 @@ public class SchemataDifferencesTools {
 			deleteTable(oldTable);
 		}
 	}
+	
+	
+
 
 	/**
 	 * @param oldTable
 	 */
-	public static void insertAttributesNotInOld(Table oldTable) {
+	public  void insertAttributesNotInOld(Table oldTable) {
 		String newAttrKey;
 		newAttrKey = (String) newAttributeKeys.next();
 		Attribute newAttr = newAttributeValues.next();
@@ -77,7 +85,7 @@ public class SchemataDifferencesTools {
 	/**
 	 * @param newTable
 	 */
-	public static void deleteAttributesNotInNew(Table newTable) {
+	public  void deleteAttributesNotInNew(Table newTable) {
 		String oldAttrKey;
 		oldAttrKey = (String) oldAttributeKeys.next();
 		Attribute oldAttr = oldAttributeValues.next();
@@ -88,7 +96,7 @@ public class SchemataDifferencesTools {
 	 * @param oldTable
 	 * @param newTable
 	 */
-	public static void initializeAttributesValues(Table oldTable, Table newTable) {
+	public  void initializeAttributesValues(Table oldTable, Table newTable) {
 		oldAttributeValues = oldTable.getAttrs().values().iterator();
 		newAttributeValues = newTable.getAttrs().values().iterator();
 	}
@@ -97,12 +105,12 @@ public class SchemataDifferencesTools {
 	 * @param oldTable
 	 * @param newTable
 	 */
-	public static void initializeAttributesKeys(Table oldTable, Table newTable) {
+	public  void initializeAttributesKeys(Table oldTable, Table newTable) {
 		oldAttributeKeys = oldTable.getAttrs().keySet().iterator();
 		newAttributeKeys = newTable.getAttrs().keySet().iterator();
 	}
 
-	public static void attributeInsert(Table oldTable, Attribute newAttr) {
+	public  void attributeInsert(Table oldTable, Attribute newAttr) {
 		results.myMetrics.insertAttr();
 		insertItemInList(newAttr);
 		newAttr.setMode(SqlItem.INSERTED);
@@ -111,7 +119,7 @@ public class SchemataDifferencesTools {
 		results.tablesInfo.addChange(oldTable.getName(), results.myMetrics.getNumRevisions(), ChangeType.Insertion);
 	}
 
-	public static void attributeDelete(Attribute oldAttr, Table newTable) {
+	public  void attributeDelete(Attribute oldAttr, Table newTable) {
 		results.myMetrics.deleteAttr();
 		deleteItem(oldAttr);
 		oldAttr.setMode(SqlItem.DELETED);
@@ -120,7 +128,7 @@ public class SchemataDifferencesTools {
 		results.tablesInfo.addChange(newTable.getName(), results.myMetrics.getNumRevisions(), ChangeType.Deletion);
 	}
 
-	public static void attributeTypeChange(Attribute oldAttr, Attribute newAttr) {
+	public  void attributeTypeChange(Attribute oldAttr, Attribute newAttr) {
 		results.myMetrics.alterAttr();
 		updateAttribute(newAttr, "TypeChange");
 		oldAttr.getTable().setMode(SqlItem.UPDATED);
@@ -131,7 +139,7 @@ public class SchemataDifferencesTools {
 				ChangeType.AttrTypeChange);
 	}
 
-	public static void attributeKeyChange(Attribute oldAttr, Attribute newAttr) {
+	public  void attributeKeyChange(Attribute oldAttr, Attribute newAttr) {
 		results.myMetrics.alterKey();
 		updateAttribute(newAttr, "KeyChange");
 		oldAttr.getTable().setMode(SqlItem.UPDATED);
@@ -142,28 +150,28 @@ public class SchemataDifferencesTools {
 				ChangeType.KeyChange);
 	}
 
-	public static void deleteTable(Table t) {
+	public  void deleteTable(Table t) {
 		deleteItem(t);
 		results.myMetrics.deleteTable();
 		markAll(t, SqlItem.DELETED); // mark attributes deleted
 	}
 
-	public static void insertTable(Table t) {
+	public  void insertTable(Table t) {
 		insertItemInList(t);
 		results.myMetrics.insetTable();
 		markAll(t, SqlItem.INSERTED); // mark attributes inserted
 	}
 
-	public static void alterTable(Table t) {
+	public  void alterTable(Table t) {
 		results.myMetrics.alterTable();
 	}
 
-	public static void match(SqlItem oldI, SqlItem newI) {
+	public  void match(SqlItem oldI, SqlItem newI) {
 		oldI.setMode(SqlItem.MACHED);
 		newI.setMode(SqlItem.MACHED);
 	}
 
-	public static void markAll(Table t, int mode) {
+	public  void markAll(Table t, int mode) {
 		t.setMode(mode);
 		for (Iterator<Attribute> i = t.getAttrs().values().iterator(); i.hasNext();) {
 			i.next().setMode(mode);
@@ -180,7 +188,7 @@ public class SchemataDifferencesTools {
 		}
 	}
 
-	public static void insertItemInList(SqlItem item) {
+	public  void insertItemInList(SqlItem item) {
 		if (item.getClass() == Attribute.class) {
 			if (in == null) {
 				in = new Insersion();
@@ -198,7 +206,7 @@ public class SchemataDifferencesTools {
 		}
 	}
 
-	public static void deleteItem(SqlItem item) {
+	public  void deleteItem(SqlItem item) {
 		if (item.getClass() == Attribute.class) {
 			if (out == null) {
 				out = new Deletion();
@@ -216,7 +224,7 @@ public class SchemataDifferencesTools {
 		}
 	}
 
-	public static void updateAttribute(Attribute item, String type) {
+	public  void updateAttribute(Attribute item, String type) {
 		if (up == null) {
 			up = new Update();
 			results.myTransformationList.add(up);
@@ -228,7 +236,7 @@ public class SchemataDifferencesTools {
 		}
 	}
 
-	public static void setOriginalSizes(int[] sizeA, int[] sizeB) {
+	public  void setOriginalSizes(int[] sizeA, int[] sizeB) {
 		results.myMetrics.setOrigTables(sizeA[0]);
 		results.myMetrics.setOrigAttrs(sizeA[1]);
 		results.myMetrics.setNewTables(sizeB[0]);
@@ -236,7 +244,7 @@ public class SchemataDifferencesTools {
 	}
 
 	// Personal Project Below -0---o-0-0---
-//	public static int computeLevenshteinDistance(CharSequence lhs, CharSequence rhs) {
+//	public  int computeLevenshteinDistance(CharSequence lhs, CharSequence rhs) {
 //		int len0 = lhs.length() + 1;
 //		int len1 = rhs.length() + 1;
 //
@@ -279,7 +287,7 @@ public class SchemataDifferencesTools {
 //		return cost[len0 - 1];
 //	}
 //
-//	public static void getLevenshteinDistance(String nameA, String nameB) {
+//	public  void getLevenshteinDistance(String nameA, String nameB) {
 //
 //		int length, lengthA, lengthB;
 //		int distance = 0;
