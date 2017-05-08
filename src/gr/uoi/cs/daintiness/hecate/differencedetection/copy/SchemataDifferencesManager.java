@@ -66,16 +66,16 @@ public class SchemataDifferencesManager {
 			
 			transitions.add(result.myTransformationList);
 			
-			MetricsExport.export(result, path);
+			MetricsExport.metrics(result, path);
 			
 		}
 		try {
-			csvExport.export(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
+			csvExport.tablesCSV(path, result.myMetrics.getNumRevisions()+1, result.tablesInfo);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		xmlExport.export(transitions, path);
+		xmlExport.xml(transitions, path);
 		
 		Schema oldSchema = HecateParser.parse(path + File.separator + folders[0]);
 		Schema newSchema = HecateParser.parse(path + File.separator + folders[folders.length-1]);

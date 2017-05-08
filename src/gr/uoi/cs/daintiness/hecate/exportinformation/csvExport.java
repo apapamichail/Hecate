@@ -11,10 +11,11 @@
 	import gr.uoi.cs.daintiness.hecate.metrics.tables.MetricsOverVersion;
 	import gr.uoi.cs.daintiness.hecate.metrics.tables.TablesInfo;
 	
-	public class csvExport extends Export {
+	public class csvExport {
 
-		public static void tablesCSV(String path, int versions, TablesInfo tableinfo) {
-			String slashedPath = Export.getDir(path) + File.separator;
+		public  void tablesCSV(String path, int versions, TablesInfo tableinfo) {
+			getDirectory getPath = new getDirectory();
+			String slashedPath = getPath.getDir(path) + File.separator;
 			String sTab = slashedPath + "tables.csv";
 			String sTabI = slashedPath + "table_ins.csv";
 			String sTabD = slashedPath + "table_del.csv";
@@ -106,18 +107,13 @@
 						                      JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		private static void writeVersionsLine(BufferedWriter file, int versions)
+		private  void writeVersionsLine(BufferedWriter file, int versions)
 				throws IOException {
 			file.write(";");
 			for (int i = 0; i < versions; i++) {
 				file.write(i + ";");
 			}
 			file.write("\n");
-		}
-		@Override
-		void export() {
-			// TODO Auto-generated method stub
-			
 		}
 	}
 

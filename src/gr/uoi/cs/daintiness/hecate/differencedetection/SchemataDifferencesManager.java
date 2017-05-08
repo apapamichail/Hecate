@@ -27,9 +27,7 @@ public class SchemataDifferencesManager {
 		return result;
 	}
 	
-	public Schema getSchema(String path){
-		return HecateParser.parse(path);
-	}
+	
 	/**
 	 * @param result
 	 * @param folder 
@@ -41,9 +39,11 @@ public class SchemataDifferencesManager {
 		AlgorithmFactory algorithmFactory = new AlgorithmFactory();
 		Transitions transitions = new Transitions();
 		DifferencesAlgorithm differencesAlgorithm = algorithmFactory.getAlgorithm("DifferencesAlgorithmSkoulis");
+		
 		MetricsExport metricsExport = new MetricsExport();
 		csvExport exportToCSV = new csvExport();
 		xmlExport exportToXML = new xmlExport();
+		
 		String[] folders = folder.list();
 
 		String path = folder.getAbsolutePath();
@@ -97,4 +97,7 @@ public class SchemataDifferencesManager {
 		return result;
 	}
 
+	public Schema getSchema(String path){
+		return HecateParser.parse(path);
+	}
 }

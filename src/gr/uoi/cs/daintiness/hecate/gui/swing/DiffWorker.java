@@ -59,19 +59,20 @@ public class DiffWorker extends SwingWorker<DifferencesResult, Integer> {
 			newSchema = HecateParser.parse(newFile.getAbsolutePath());
 			
 			
-			result = //algo.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
-					differencesManager.getDifferencesBetweenTwoRevisions(oldSchema, newSchema);
+			result = differencesManager.getDifferencesBetweenTwoRevisions(oldSchema, newSchema);
 			
 		} else if (folder != null){
 			/* Here i want to export everything
 			 * by checking all the schematas for differences
 			 */
 			checkTheDifferencesInHistory(differencesManager);
+			
 			oldSchema = HecateParser.parse(folder.getAbsolutePath() + File.separator + folder.list()[0]);
 			newSchema = HecateParser.parse(folder.getAbsolutePath() + File.separator + folder.list()[folder.list().length-1]);
-			result = algo.getDifferencesBetweenTwoSchemata(oldSchema, newSchema);
+			result = differencesManager.getDifferencesBetweenTwoRevisions(oldSchema, newSchema);
 					//differencesManager.getDifferencesBetweenTwoRevisions(new File(folder.getAbsolutePath() + File.separator + folder.list()[0]), 
 					//new File(folder.getAbsolutePath() + File.separator + folder.list()[folder.list().length-1]));
+			
 		}
 
 

@@ -12,26 +12,20 @@ import gr.uoi.cs.daintiness.hecate.transitions.TransitionList;
 import gr.uoi.cs.daintiness.hecate.transitions.Transitions;
 import gr.uoi.cs.daintiness.hecate.transitions.Update;
 
-public class xmlExport extends Export{
-	@Override
-	public void export(Transitions transition, String path) {
+public class xmlExport {
+	public  void export(Transitions transition, String path) {
 		try {
+			getDirectory getPath = new getDirectory();
 			JAXBContext jaxbContext = JAXBContext.newInstance(Update.class,
 					Deletion.class, Insersion.class,
 					TransitionList.class, Transitions.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			String filePath = getDir(path) + File.separator + "transitions.xml";
+			String filePath = getPath.getDir(path) + File.separator + "transitions.xml";
 			jaxbMarshaller.marshal(transition, new FileOutputStream(filePath));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	void export() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
