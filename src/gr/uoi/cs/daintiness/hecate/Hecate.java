@@ -11,9 +11,9 @@ import gr.uoi.cs.daintiness.hecate.gui.swing.MainWindow;
 public class Hecate{
 
 	private static MainWindow hecate;
-	/**
+	/** A
 	 * Creates and shows the main Hecate Window
-	 * @param args
+	 * @param args 
 	 */
 	public static void main(String[] args)  {
 		//test t =new test();

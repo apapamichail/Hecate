@@ -1,10 +1,11 @@
 package gr.uoi.cs.daintiness.hecate.differencedetection;
 
+import gr.uoi.cs.daintiness.hecate.sql.Attribute;
 import gr.uoi.cs.daintiness.hecate.sql.Schema;
 import gr.uoi.cs.daintiness.hecate.sql.SqlItem;
 import gr.uoi.cs.daintiness.hecate.sql.Table;
 
-public interface DifferencesAlgorithm {
+public interface Algorithm {
 
 	/**
 	 * This function performs the main diff algorithm for
@@ -29,5 +30,25 @@ public interface DifferencesAlgorithm {
 
 	DifferencesResult getDifferencesBetweenTwoSchemata(Schema schemaA, Schema schemaB);
 
+	void setUp(Schema schemaA, Schema schemaB);
+
+	void checkRemainingTableKeysforNew();
+
+	/**
+	 * 
+	 */
+	void checkRemainingTableKeysforOld();
+
+	void findSameTablesDifferences(Table oldTable, Table newTable);
+	
+	void deleteTable(Table t);
+
+	void insertTable(Table t);
+
+	void alterTable(Table t);
+
+	void match(SqlItem oldI, SqlItem newI);
+
+	void setOriginalSizes(int[] sizeA, int[] sizeB);
 
 }

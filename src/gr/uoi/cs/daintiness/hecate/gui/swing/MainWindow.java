@@ -41,10 +41,12 @@ public class MainWindow extends JFrame{
 	private JMenuItem viewMetrics;
 	private JMenu help;
 	private JMenuItem helpAbout;
-	
+	private JMenuItem Instructions;
 	private OpenDialog openDialog;
+	private InstructionsDialog instructionsDialog;
 	private OpenFolderDialog openFolderDialog;
 	private MetricsDialog metricsDialog;
+	private MetricsErrorDialog errorDialog;
 	private AboutDialog aboutDialog;
 	private Image hecateIcon;
 	
@@ -164,16 +166,24 @@ public class MainWindow extends JFrame{
 		view = new JMenu("View");
 		view.setMnemonic(KeyEvent.VK_V);
 		// View->Metrics...
-		viewMetrics = new JMenuItem("Metrics...");
+		viewMetrics = new JMenuItem("Export Metrics");
 		viewMetrics.setMnemonic(KeyEvent.VK_M);
-		viewMetrics.setToolTipText("View diff Metrics");
+		viewMetrics.setToolTipText("Export Metrics");
 		viewMetrics.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if (res != null) {
-					metricsDialog = new MetricsDialog(res.myMetrics);
+				
+				
+				if(res == null){ 
+					errorDialog= new MetricsErrorDialog();
+					errorDialog.setVisible(true);
+				}
+				
+				if (res!=null){
+					metricsDialog = new MetricsDialog(); //res.myMetrics
 					metricsDialog.setVisible(true);
 				}
 			}
+		
 		});
 		view.add(viewMetrics);
 		menuBar.add(view);
@@ -190,7 +200,19 @@ public class MainWindow extends JFrame{
 				aboutDialog = new AboutDialog();
 				aboutDialog.setVisible(true);
 			}
+			
 		});
+		// Help->Instructions
+				Instructions = new JMenuItem("Instructions");
+				Instructions.setMnemonic(KeyEvent.VK_A);
+				Instructions.setToolTipText("Instructions");
+				Instructions.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						instructionsDialog = new InstructionsDialog();
+						instructionsDialog.setVisible(true);
+					}
+					});
+		help.add(Instructions);
 		help.add(helpAbout);
 		menuBar.add(help);
 		

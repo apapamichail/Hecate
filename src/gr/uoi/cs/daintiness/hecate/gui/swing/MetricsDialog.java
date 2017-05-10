@@ -3,32 +3,61 @@ package gr.uoi.cs.daintiness.hecate.gui.swing;
 import gr.uoi.cs.daintiness.hecate.metrics.Metrics;
 
 import java.awt.Toolkit;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.Dimension;
+import java.awt.Font;
 
 /**
- * A dialog with miscellaneous metics
+ * A dialog with miscellaneous metrics
  * @author giskou
  *
  */
 @SuppressWarnings("serial")
 public class MetricsDialog extends JDialog {
-
+	private JButton close;
+	private JLabel ExportMessage;
+	private JLabel ErrorMessage;
+	
 	/**
 	 * Paramerized Constructor
 	 * @param d a Delta object that has run {@link minus} at least once
 	 */
-	public MetricsDialog(Metrics d) {
-		setMinimumSize(new Dimension(350, 250));
-		setTitle("Metrics");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MetricsDialog.class.getResource("/gr/uoi/cs/daintiness/hecate/art/icon.png")));
+	public MetricsDialog(/*Metrics d*/) {
+		initialize();
+		//setMinimumSize(new Dimension(350, 250));
+		//setTitle("Metrics");
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		add(Box.createRigidArea(new Dimension(0, 15)));
+		ExportMessage = new JLabel("<html> Metrics saved. </html>");
+		ExportMessage.setFont(new Font("Calibri", Font.BOLD, 14));
+		ExportMessage.setAlignmentX(CENTER_ALIGNMENT);
+		add(ExportMessage);
+	
+		add(Box.createRigidArea(new Dimension(0, 15)));
+		close = new JButton("Close");
+		close.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				dispose();
+			}
+		});
+		close.setAlignmentX(CENTER_ALIGNMENT);
+		add(close);
+		
+		add(Box.createRigidArea(new Dimension(0, 15)));
+		
+		draw();
+		/*setIconImage(Toolkit.getDefaultToolkit().getImage(MetricsDialog.class.getResource("/gr/uoi/cs/daintiness/hecate/art/icon.png")));
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		
 		if (d.getNumRevisions() > 2) {
@@ -146,14 +175,31 @@ public class MetricsDialog extends JDialog {
 		insertionAttributeLine.add(lblInsertionAttributes);
 		
 		
-//		JPanel exportContainer = new JPanel();
-//		JButton btnExport = new JButton("Export");
-//		getContentPane().add(Box.createVerticalGlue());
-//		exportContainer.setBorder(new EmptyBorder(8, 8, 8, 8));
-//		getContentPane().add(exportContainer);
-//		exportContainer.setLayout(new BoxLayout(exportContainer, BoxLayout.X_AXIS));
-//		exportContainer.add(btnExport);
+		JPanel exportContainer = new JPanel();
+		JButton btnExport = new JButton("Export");
+		getContentPane().add(Box.createVerticalGlue());
+		exportContainer.setBorder(new EmptyBorder(8, 8, 8, 8));
+		getContentPane().add(exportContainer);
+		exportContainer.setLayout(new BoxLayout(exportContainer, BoxLayout.X_AXIS));
+		exportContainer.add(btnExport);
 		
-	//	pack();
+		pack();
+		*/
+		
+	}
+	private void initialize() {
+		setTitle("About");
+		setModalityType(ModalityType.APPLICATION_MODAL);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	}
+	
+	private void draw() {
+		pack();
+		setResizable(false);
+		// center on screen
+		Toolkit toolkit = getToolkit();
+		Dimension size = toolkit.getScreenSize();
+		setLocation(size.width/2 - getWidth()/2, 
+		            size.height/2 - getHeight()/2);
 	}
 }
