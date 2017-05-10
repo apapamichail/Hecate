@@ -14,8 +14,8 @@
 	public class csvExport {
 
 		public  void tablesCSV(String path, int versions, TablesInfo tableinfo) {
-			Directory getPath = new Directory();
-			String slashedPath = getPath.getDirectory(path) + File.separator;
+			getDirectory getPath = new getDirectory();
+			String slashedPath = getPath.getDir(path) + File.separator;
 			String sTab = slashedPath + "tables.csv";
 			String sTabI = slashedPath + "table_ins.csv";
 			String sTabD = slashedPath + "table_del.csv";

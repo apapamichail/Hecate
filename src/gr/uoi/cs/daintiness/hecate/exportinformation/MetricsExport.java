@@ -9,9 +9,10 @@ import gr.uoi.cs.daintiness.hecate.differencedetection.DifferencesResult;
 
 public class MetricsExport {
 	
-	public static void metrics(DifferencesResult result, String path)
+	public  void metrics(DifferencesResult result, String path)
 			throws IOException {
-		String filePath = Directory.getDirectory(path) + File.separator + "metrics.csv";
+		getDirectory getPath = new getDirectory();
+		String filePath = getPath.getDir(path) + File.separator + "metrics.csv";
 		FileWriter filewriter = new FileWriter(filePath, true);
 		BufferedWriter metrics = new BufferedWriter(filewriter);
 		String name = result.myMetrics.getVersionNames()[1];
@@ -36,8 +37,10 @@ public class MetricsExport {
 			);
 		metrics.close();
 	}
-	public static void initMetrics(String path) throws IOException {
-		String filePath = Directory.getDirectory(path) + File.separator + "metrics.csv";
+	public  void initMetrics(String path) throws IOException {
+		getDirectory getPath = new getDirectory();
+
+		String filePath = getPath.getDir(path) + File.separator + "metrics.csv";
 		BufferedWriter metrics = new BufferedWriter(new FileWriter(filePath));
 		metrics.write("trID;time;oldVer;newVer;#oldT;#newT;#oldA;#newA"
 				+ ";tIns;tDel;aIns;aDel;aTypeAlt;keyAlt;aTabIns;aTabDel\n");
